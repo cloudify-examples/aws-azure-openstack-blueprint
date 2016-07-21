@@ -1,0 +1,29 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - http://www.getcloudify.org/spec/openstack-plugin/1.4/plugin.yaml
+  - openstack-compute-blueprint.yaml
+
+inputs:
+
+  vol_name:
+    default: openstack-composed-volume
+    type: string
+
+  vol_size:
+    default: 2
+
+node_templates:
+
+  volume:
+    type: cloudify.openstack.nodes.Volume
+    properties:
+      volume:
+        size: { get_input: vol_size }
+      openstack_config: *OPENSTACK_CONFIG
+      resource_id: { get_input: vol_name }
+    relationships:
+      - type: cloudify.openstack.volume_attached_to_server
+        target: server

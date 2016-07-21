@@ -1,0 +1,132 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-azure-plugin/master/plugin.yaml
+  - azure-network-blueprint.yaml
+  - azure-storage-blueprint.yaml
+
+inputs:
+
+  size:
+    type: string
+    required: true
+
+  os_family:
+    type: string
+    required: true
+
+  image_publisher:
+    type: string
+    default: OpenLogic
+    required: true
+
+  image_offer:
+    type: string
+    default: CentOS
+    required: true
+
+  image_sku:
+    type: string
+    default: '7.0'
+    required: true
+
+  image_version:
+    type: string
+    default: latest
+    required: true
+
+  os_username:
+    type: string
+    default: ''
+    required: true
+
+  os_password:
+    type: string
+    default: ''
+    required: true
+
+  os_public_keys:
+    required: true
+
+  os_public_key_auth_only:
+    type: boolean
+    required: true
+    default: true
+
+
+node_templates:
+
+  availability_set:
+    type: cloudify.azure.nodes.compute.AvailabilitySet
+    properties:
+      name: {concat:[{get_input: resource_prefix},availset,{get_input: resource_suffix}]}
+      location: { get_input: location }
+      azure_config: *AZURE_CONFIG
+      retry_after: { get_input: retry_after }
+    relationships:
+    - type: cloudify.azure.relationships.contained_in_resource_group
+      target: resource_group
+
+  server:
+    type: cloudify.azure.nodes.compute.VirtualMachine
+    properties:
+      name: {concat:[{get_input: resource_prefix},vm,{get_input: resource_suffix}]}
+      location: { get_input: location }
+      retry_after: { get_input: retry_after }
+      azure_config: *AZURE_CONFIG
+      os_family: { get_input: os_family }
+      resource_config:
+        hardwareProfile:
+          vmSize: { get_input: size }
+        storageProfile:
+          imageReference:
+            publisher: { get_input: image_publisher }
+            offer: { get_input: image_offer }
+            sku: { get_input: image_sku }
+            version: { get_input: image_version }
+        osProfile:
+          computerName: { get_property: [SELF, name] }
+          adminUsername: { get_input: os_username }
+          adminPassword: { get_input: os_password }
+          linuxConfiguration:
+            ssh:
+              publicKeys: { get_input: os_public_keys }
+            disablePasswordAuthentication: { get_input: os_public_key_auth_only }
+      agent_config:
+        install_method: none
+    relationships:
+    - type: cloudify.azure.relationships.contained_in_resource_group
+      target: resource_group
+    - type: cloudify.azure.relationships.connected_to_storage_account
+      target: storage_account
+    - type: cloudify.azure.relationships.connected_to_nic
+      target: nic
+
+  public_ip:
+    type: cloudify.azure.nodes.network.PublicIPAddress
+    properties:
+      name: {concat:[{get_input: resource_prefix},pipvm,{get_input: resource_suffix}]}
+      location: { get_input: location }
+      retry_after: { get_input: retry_after }
+      azure_config: *AZURE_CONFIG
+      resource_config:
+        publicIPAllocationMethod: Static
+    relationships:
+    - type: cloudify.azure.relationships.contained_in_resource_group
+      target: resource_group
+
+  nic:
+    type: cloudify.azure.nodes.network.NetworkInterfaceCard
+    properties:
+      name: {concat:[{get_input: resource_prefix},nic,{get_input: resource_suffix}]}
+      location: { get_input: location }
+      azure_config: *AZURE_CONFIG
+      retry_after: { get_input: retry_after }
+    relationships:
+    - type: cloudify.azure.relationships.contained_in_resource_group
+      target: resource_group
+    - type: cloudify.azure.relationships.nic_connected_to_network_security_group
+      target: network_security_group
+    - type: cloudify.azure.relationships.connected_to_ip_configuration
+      target: ip_cfg
