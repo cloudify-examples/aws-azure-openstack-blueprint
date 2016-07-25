@@ -5,12 +5,25 @@ imports:
   - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-azure-plugin/master/plugin.yaml
   - azure-network-blueprint.yaml
 
+inputs:
+
+  storage_account_name:
+    default: cfysa01
+
+dsl_definitions:
+
+  azure_config: &AZURE_CONFIG
+    subscription_id: { get_input: subscription_id }
+    tenant_id: { get_input: tenant_id }
+    client_id: { get_input: client_id }
+    client_secret: { get_input: client_secret }
+
 node_templates:
 
-  storage_account:
+  cloudify_storage_account:
     type: cloudify.azure.nodes.storage.StorageAccount
     properties:
-      name: {concat:[{get_input: resource_prefix},asa,{get_input: resource_suffix}]}
+      name: { get_input: storage_account_name }
       location: { get_input: location }
       azure_config: *AZURE_CONFIG
       retry_after: { get_input: retry_after }
@@ -18,4 +31,4 @@ node_templates:
         accountType: Standard_LRS
     relationships:
     - type: cloudify.azure.relationships.contained_in_resource_group
-      target: resource_group
+      target: cloudify_resource_group
