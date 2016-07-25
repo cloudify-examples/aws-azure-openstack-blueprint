@@ -1,0 +1,125 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - http://www.getcloudify.org/spec/aws-plugin/1.4.1/plugin.yaml
+
+inputs:
+
+  aws_access_key_id:
+    description: YOUR AWS ACCESS KEY ID
+
+  aws_secret_access_key:
+    description: YOUR AWS SECRET ACCESS KEY
+
+  ec2_region_name:
+    default: us-east-1
+
+  ec2_region_endpoint:
+    default: ec2.us-east-1.amazonaws.com
+
+  availability_zone:
+    default: us-east-1c
+
+  nat_image_id:
+    default: ami-4868ab25
+
+  nat_instance_type:
+    default: t2.micro
+
+dsl_definitions:
+
+  aws_config: &AWS_CONFIG
+    aws_access_key_id: { get_input: aws_access_key_id }
+    aws_secret_access_key: { get_input: aws_secret_access_key }
+    ec2_region_name: { get_input: ec2_region_name }
+    ec2_region_endpoint: { get_input: ec2_region_endpoint }
+
+node_templates:
+
+  cloudify_vpc:
+    type: cloudify.aws.nodes.VPC
+    properties:
+      cidr_block: 10.0.0.0/16
+      aws_config: *AWS_CONFIG
+
+  cloudify_public_subnet:
+    type: cloudify.aws.nodes.Subnet
+    properties:
+      cidr_block: 10.0.0.0/24
+      availability_zone: { get_input: availability_zone }
+      aws_config: *AWS_CONFIG
+    relationships:
+      - type: cloudify.aws.relationships.subnet_contained_in_vpc
+        target: cloudify_vpc
+
+  cloudify_internet_gateway:
+    type: cloudify.aws.nodes.InternetGateway
+    properties:
+      aws_config: *AWS_CONFIG
+    relationships:
+      - type: cloudify.aws.relationships.gateway_connected_to_vpc
+        target: cloudify_vpc
+
+  cloudify_public_route_table:
+    type: cloudify.aws.nodes.RouteTable
+    properties:
+      aws_config: *AWS_CONFIG
+    relationships:
+      - type: cloudify.aws.relationships.routetable_contained_in_vpc
+        target: cloudify_vpc
+      - type: cloudify.aws.relationships.routetable_associated_with_subnet
+        target: cloudify_public_subnet
+      - type: cloudify.aws.relationships.route_table_to_gateway
+        target: cloudify_internet_gateway
+
+  cloudify_nat_gateway_instance:
+    type: cloudify.aws.nodes.Instance
+    properties:
+      name: NAT
+      image_id: { get_input: nat_image_id }
+      instance_type: { get_input: nat_instance_type }
+      agent_config:
+        install_method: none
+      aws_config: *AWS_CONFIG
+    relationships:
+      - type: cloudify.aws.relationships.instance_contained_in_subnet
+        target: cloudify_public_subnet
+      - type: cloudify.aws.relationships.instance_connected_to_elastic_ip
+        target: cloudify_nat_gateway_elastic_ip
+
+  cloudify_nat_gateway_elastic_ip:
+    type: cloudify.aws.nodes.ElasticIP
+    properties:
+      aws_config: *AWS_CONFIG
+      domain: vpc
+
+  cloudify_private_subnet:
+    type: cloudify.aws.nodes.Subnet
+    properties:
+      cidr_block: 10.0.1.0/24
+      availability_zone: { get_input: availability_zone }
+      aws_config: *AWS_CONFIG
+    relationships:
+      - type: cloudify.aws.relationships.subnet_contained_in_vpc
+        target: cloudify_vpc
+
+  cloudify_private_route_table:
+    type: cloudify.aws.nodes.RouteTable
+    properties:
+      aws_config: *AWS_CONFIG
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: aws.vpc.routetable.create_route_table
+          inputs:
+            routes:
+              - destination_cidr_block: 0.0.0.0/0
+                instance_id: { get_attribute: [ cloudify_nat_gateway_instance, aws_resource_id ] }
+    relationships:
+      - type: cloudify.aws.relationships.routetable_contained_in_vpc
+        target: cloudify_vpc
+      - type: cloudify.aws.relationships.routetable_associated_with_subnet
+        target: cloudify_private_subnet
+      - type: cloudify.relationships.connected_to
+        target: cloudify_nat_gateway_instance

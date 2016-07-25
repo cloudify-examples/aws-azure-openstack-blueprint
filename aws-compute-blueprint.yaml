@@ -1,0 +1,98 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - http://www.getcloudify.org/spec/aws-plugin/1.4.1/plugin.yaml
+  - aws-network-blueprint.yaml
+  - aws-storage-blueprint.yaml
+
+inputs:
+
+  image_id:
+    default: ami-03bd5a6e
+
+  instance_type:
+    default: m3.medium
+
+  ssh_key_filename:
+    type: string
+    default: ~/.ssh/aws-compute-key.pem
+
+dsl_definitions:
+
+  aws_config: &AWS_CONFIG
+    aws_access_key_id: { get_input: aws_access_key_id }
+    aws_secret_access_key: { get_input: aws_secret_access_key }
+    ec2_region_name: { get_input: ec2_region_name }
+    ec2_region_endpoint: { get_input: ec2_region_endpoint }
+
+node_templates:
+
+  cloudify_vm:
+    type: cloudify.aws.nodes.Instance
+    properties:
+      agent_config:
+        install_method: none
+      image_id: { get_input: image_id }
+      instance_type: { get_input: instance_type }
+      parameters:
+        placement: { get_property: [ cloudify_public_subnet, availability_zone ] }
+      aws_config: *AWS_CONFIG
+    relationships:
+      - type: cloudify.aws.relationships.instance_contained_in_subnet
+        target: cloudify_public_subnet
+      - type: cloudify.aws.relationships.instance_connected_to_security_group
+        target: cloudify_group
+      - type: cloudify.aws.relationships.instance_connected_to_keypair
+        target: cloudify_keypair
+      - type: cloudify.aws.relationships.instance_connected_to_elastic_ip
+        target: cloudify_ip
+
+  cloudify_ip:
+    type: cloudify.aws.nodes.ElasticIP
+    properties:
+      aws_config: *AWS_CONFIG
+      domain: vpc
+    relationships:
+      - type: cloudify.relationships.depends_on
+        target: cloudify_internet_gateway
+
+  cloudify_keypair:
+    type: cloudify.aws.nodes.KeyPair
+    properties:
+      private_key_path: { get_input: ssh_key_filename }
+      aws_config: *AWS_CONFIG
+
+  cloudify_group:
+    type: cloudify.aws.nodes.SecurityGroup
+    properties:
+      aws_config: *AWS_CONFIG
+      description: Compute Security Group
+      rules:
+        - ip_protocol: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 0.0.0.0/0
+        - ip_protocol: tcp
+          from_port: 80
+          to_port: 80
+          cidr_ip: 0.0.0.0/0
+        - ip_protocol: tcp
+          from_port: 443
+          to_port: 443
+          cidr_ip: 0.0.0.0/0
+        - ip_protocol: tcp
+          from_port: 8101
+          to_port: 8101
+          cidr_ip: { get_property: [cloudify_vpc, cidr_block] }
+        - ip_protocol: tcp
+          from_port: 5672
+          to_port: 5672
+          cidr_ip: { get_property: [cloudify_vpc, cidr_block] }
+        - ip_protocol: tcp
+          from_port: 53229
+          to_port: 53229
+          cidr_ip: { get_property: [cloudify_vpc, cidr_block] }
+    relationships:
+      - type: cloudify.aws.relationships.security_group_contained_in_vpc
+        target: cloudify_vpc

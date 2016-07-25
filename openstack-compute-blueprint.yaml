@@ -1,0 +1,83 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - http://www.getcloudify.org/spec/openstack-plugin/1.4/plugin.yaml
+  - openstack-network-blueprint.yaml
+
+inputs:
+
+  image_id:
+    type: string
+    default: 6c3047c6-17b1-4aaf-a657-9229bb481e50
+
+  flavor_id:
+    type: string
+    default: 9cf6e43b-e191-47ca-8665-f8592e2d6227
+
+  use_existing_keypair:
+    type: boolean
+    default: false
+
+  keypair_name:
+    type: string
+    default: openstack-composed-kp
+
+  ssh_key_filename:
+    type: string
+    default: ~/.ssh/openstack-composed-kp.pem
+
+  security_group_name:
+    type: string
+    default: openstack-composed-sg
+
+  port:
+    type: string
+    default: 8080
+
+node_templates:
+
+  server:
+    type: cloudify.openstack.nodes.Server
+    properties:
+      openstack_config: *OPENSTACK_CONFIG
+      resource_id: { get_input: server_name }
+      install_agent: false
+      server:
+        image: { get_input: image_id }
+        flavor: { get_input: flavor_id }
+      management_network_name: { get_property: [network, resource_id] }
+    relationships:
+      - target: keypair
+        type: cloudify.openstack.server_connected_to_keypair
+      - target: ip
+        type: cloudify.openstack.server_connected_to_floating_ip
+
+  ip:
+    type: cloudify.openstack.nodes.FloatingIP
+    properties:
+      floatingip:
+        floating_network_name: { get_input: external_network_name }
+      openstack_config: *OPENSTACK_CONFIG
+
+  keypair:
+    type: cloudify.openstack.nodes.KeyPair
+    properties:
+      use_external_resource: { get_input: use_existing_keypair }
+      resource_id: { get_input: keypair_name }
+      private_key_path: { get_input: ssh_key_filename }
+      openstack_config: *OPENSTACK_CONFIG
+
+  security_group:
+    type: cloudify.openstack.nodes.SecurityGroup
+    properties:
+      openstack_config: *OPENSTACK_CONFIG
+      resource_id: { get_input: security_group_name }
+      rules:
+        - port: 22
+          remote_ip_prefix: { get_property: [private_subnet, subnet, cidr] }
+        - port: 22
+          remote_ip_prefix: { get_property: [public_subnet, subnet, cidr] }
+        - port: { get_input: port }
+          remote_ip_prefix: { get_property: [public_subnet, subnet, cidr] }

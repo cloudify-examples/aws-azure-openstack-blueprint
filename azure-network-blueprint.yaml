@@ -1,0 +1,160 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-azure-plugin/master/plugin.yaml
+
+inputs:
+
+  subscription_id:
+    type: string
+
+  tenant_id:
+    type: string
+
+  client_id:
+    type: string
+
+  client_secret:
+    type: string
+
+  location:
+    default: eastus
+
+  retry_after:
+    type: integer
+    default: 60
+
+  subnet_private_cidr:
+    type: string
+    default: 10.10.0.0/24
+
+  resource_group_name:
+    default: cfyrg01
+
+  virtual_network_name:
+    default: cfyvnet01
+
+  private_subnet_name:
+    default: cfypsubnet01
+
+  network_security_group_name:
+    default: cfynsgroup01
+
+dsl_definitions:
+
+  azure_config: &AZURE_CONFIG
+    subscription_id: { get_input: subscription_id }
+    tenant_id: { get_input: tenant_id }
+    client_id: { get_input: client_id }
+    client_secret: { get_input: client_secret }
+
+node_templates:
+
+  cloudify_resource_group:
+    type: cloudify.azure.nodes.ResourceGroup
+    properties:
+      name: { get_input: resource_group_name }
+      location: { get_input: location }
+      azure_config: *AZURE_CONFIG
+
+  cloudify_virtual_network:
+    type: cloudify.azure.nodes.network.VirtualNetwork
+    properties:
+      name: { get_input: virtual_network_name }
+      location: { get_input: location }
+      azure_config: *AZURE_CONFIG
+    relationships:
+    - type: cloudify.azure.relationships.contained_in_resource_group
+      target: cloudify_resource_group
+
+  cloudify_private_subnet:
+    type: cloudify.azure.nodes.network.Subnet
+    properties:
+      name: { get_input: private_subnet_name }
+      location: { get_input: location }
+      azure_config: *AZURE_CONFIG
+      resource_config:
+        addressPrefix: { get_input: subnet_private_cidr }
+    relationships:
+    - type: cloudify.azure.relationships.contained_in_virtual_network
+      target: cloudify_virtual_network
+
+  cloudify_network_security_group:
+    type: cloudify.azure.nodes.network.NetworkSecurityGroup
+    properties:
+      name: { get_input: network_security_group_name }
+      location: { get_input: location }
+      retry_after: { get_input: retry_after }
+      azure_config: *AZURE_CONFIG
+      resource_config:
+        securityRules:
+        - name: nsr_ssh
+          properties:
+            description: SSH access
+            protocol: Tcp
+            sourcePortRange: '*'
+            destinationPortRange: 22
+            sourceAddressPrefix: '*'
+            destinationAddressPrefix: '*'
+            priority: 100
+            access: Allow
+            direction: Inbound
+        - name: nsr_http
+          properties:
+            description: REST API (HTTP) access
+            protocol: Tcp
+            sourcePortRange: '*'
+            destinationPortRange: 80
+            sourceAddressPrefix: '*'
+            destinationAddressPrefix: '*'
+            priority: 200
+            access: Allow
+            direction: Inbound
+        - name: nsr_https
+          properties:
+            description: REST API (HTTPS) access
+            protocol: Tcp
+            sourcePortRange: '*'
+            destinationPortRange: 443
+            sourceAddressPrefix: '*'
+            destinationAddressPrefix: '*'
+            priority: 201
+            access: Allow
+            direction: Inbound
+        - name: nsr_internal_rest
+          properties:
+            description: Internal REST access
+            protocol: Tcp
+            sourcePortRange: '*'
+            destinationPortRange: 8101
+            sourceAddressPrefix: { get_input: subnet_private_cidr }
+            destinationAddressPrefix: '*'
+            priority: 300
+            access: Allow
+            direction: Inbound
+        - name: nsr_rabbitmq
+          properties:
+            description: RabbitMQ access
+            protocol: Tcp
+            sourcePortRange: '*'
+            destinationPortRange: 5672
+            sourceAddressPrefix: { get_input: subnet_private_cidr }
+            destinationAddressPrefix: '*'
+            priority: 400
+            access: Allow
+            direction: Inbound
+        - name: nsr_fileserver
+          properties:
+            description: FileServer access
+            protocol: Tcp
+            sourcePortRange: '*'
+            destinationPortRange: 53229
+            sourceAddressPrefix: { get_input: subnet_private_cidr }
+            destinationAddressPrefix: '*'
+            priority: 500
+            access: Allow
+            direction: Inbound
+    relationships:
+    - type: cloudify.azure.relationships.contained_in_resource_group
+      target: cloudify_resource_group

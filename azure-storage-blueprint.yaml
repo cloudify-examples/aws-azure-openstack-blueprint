@@ -1,0 +1,34 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-azure-plugin/master/plugin.yaml
+  - azure-network-blueprint.yaml
+
+inputs:
+
+  storage_account_name:
+    default: cfysa01
+
+dsl_definitions:
+
+  azure_config: &AZURE_CONFIG
+    subscription_id: { get_input: subscription_id }
+    tenant_id: { get_input: tenant_id }
+    client_id: { get_input: client_id }
+    client_secret: { get_input: client_secret }
+
+node_templates:
+
+  cloudify_storage_account:
+    type: cloudify.azure.nodes.storage.StorageAccount
+    properties:
+      name: { get_input: storage_account_name }
+      location: { get_input: location }
+      azure_config: *AZURE_CONFIG
+      retry_after: { get_input: retry_after }
+      resource_config:
+        accountType: Standard_LRS
+    relationships:
+    - type: cloudify.azure.relationships.contained_in_resource_group
+      target: cloudify_resource_group
