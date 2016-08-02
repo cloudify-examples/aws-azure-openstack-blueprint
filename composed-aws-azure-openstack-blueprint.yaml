@@ -1,0 +1,10 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+description: >
+  This blueprint will create the infrastructure needed to deploy 3 Cloudify managers (not included) in AWS Azure and Openstack.
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - aws-compute-blueprint.yaml
+  - azure-compute-blueprint.yaml
+  - openstack-compute-blueprint.yaml
