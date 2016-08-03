@@ -38,6 +38,12 @@ inputs:
   external_network_name:
     type: string
 
+  openstack_public_subnet:
+    default: 172.16.0.0/16
+
+  security_group_name:
+    default: cloudify-manager-group
+
 dsl_definitions:
   openstack_configuration: &openstack_configuration
     username: { get_input: keystone_username }
@@ -57,7 +63,7 @@ node_templates:
       resource_id: { get_input: external_network_name }
       openstack_config: *openstack_configuration
 
-  cloudify_network_router:
+  openstack_network_router:
     type: cloudify.openstack.nodes.Router
     properties:
       resource_id: cloudify-network-router
@@ -66,28 +72,35 @@ node_templates:
       - target: external_network
         type: cloudify.relationships.connected_to
 
-  cloudify_network:
+  openstack_network:
     type: cloudify.openstack.nodes.Network
     properties:
       resource_id: cloudify-network
       openstack_config: *openstack_configuration
 
-  cloudify_subnet:
+  openstack_subnet:
     type: cloudify.openstack.nodes.Subnet
     properties:
       resource_id: cloudify-subnet
       subnet:
         ip_version: 4
-        cidr: 12.0.0.0/24
+        cidr: { get_input: openstack_public_subnet }
         dns_nameservers:  [8.8.4.4, 8.8.8.8]
       openstack_config: *openstack_configuration
     relationships:
-      - target: cloudify_network
+      - target: openstack_network
         type: cloudify.relationships.contained_in
-      - target: cloudify_network_router
+      - target: openstack_network_router
         type: cloudify.openstack.subnet_connected_to_router
 
-  cloudify_group:
+  openstack_ip:
+    type: cloudify.openstack.nodes.FloatingIP
+    properties:
+      floatingip:
+        floating_network_name: { get_input: external_network_name }
+      openstack_config: *openstack_configuration
+
+  openstack_agent_group:
     type: cloudify.openstack.nodes.SecurityGroup
     properties:
       resource_id: cloudify-group
@@ -95,20 +108,52 @@ node_templates:
         description: Security group for Cloudify agent VMs
       rules:
         - port: 22
-          remote_ip_prefix: 0.0.0.0/0
+          remote_ip_prefix: { get_property: [openstack_subnet, subnet, cidr] }
         - port: 5985
-          remote_ip_prefix: 10.0.0.0/16
+          remote_ip_prefix: { get_property: [openstack_subnet, subnet, cidr] }
       openstack_config: *openstack_configuration
 
-  cloudify_group_port:
+  openstack_manager_group:
+    type: cloudify.openstack.nodes.SecurityGroup
+    properties:
+      openstack_config: *openstack_configuration
+      resource_id: { get_input: security_group_name }
+      rules:
+        - port: 22
+          remote_ip_prefix: 0.0.0.0/0
+        - port: 80
+          remote_ip_prefix: 0.0.0.0/0
+        - port: 443
+          remote_ip_prefix: 0.0.0.0/0
+        - port: 8101
+          remote_ip_prefix: { get_input: openstack_public_subnet }
+        - port: 5672
+          remote_ip_prefix: { get_input: openstack_public_subnet }
+        - port: 5985
+          remote_ip_prefix: { get_input: openstack_public_subnet }
+        - port: 53229
+          remote_ip_prefix: { get_input: openstack_public_subnet }
+
+  openstack_group_port:
     type: cloudify.openstack.nodes.Port
     properties:
       openstack_config: *openstack_configuration
       resource_id: cloudify-group-port
     relationships:
       - type: cloudify.relationships.contained_in
-        target: cloudify_network
+        target: openstack_network
       - type: cloudify.relationships.depends_on
-        target: cloudify_subnet
+        target: openstack_subnet
       - type: cloudify.openstack.port_connected_to_security_group
-        target: cloudify_group
+        target: openstack_manager_group
+
+outputs:
+  network_resource_ids:
+    value:
+      router: { get_attribute: [ openstack_network_router, external_id ] }
+      network: { get_attribute: [ openstack_network, external_id ] }
+      subnet: { get_attribute: [ openstack_subnet, external_id ] }
+      manager_group: { get_attribute: [ openstack_manager_group, external_id ] }
+      agent_group: { get_attribute: [ openstack_agent_group, external_id ] }
+      port: { get_attribute: [ openstack_group_port, external_id ] }
+      public_ip: { get_attribute: [ openstack_ip, floating_ip_address ] }

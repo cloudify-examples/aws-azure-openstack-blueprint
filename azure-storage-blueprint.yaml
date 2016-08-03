@@ -3,7 +3,6 @@ tosca_definitions_version: cloudify_dsl_1_3
 imports:
   - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
   - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-azure-plugin/master/plugin.yaml
-  - azure-network-blueprint.yaml
 
 inputs:
 
@@ -20,7 +19,7 @@ dsl_definitions:
 
 node_templates:
 
-  cloudify_storage_account:
+  azure_storage_account:
     type: cloudify.azure.nodes.storage.StorageAccount
     properties:
       name: { get_input: storage_account_name }
@@ -31,4 +30,4 @@ node_templates:
         accountType: Standard_LRS
     relationships:
     - type: cloudify.azure.relationships.contained_in_resource_group
-      target: cloudify_resource_group
+      target: azure_resource_group
