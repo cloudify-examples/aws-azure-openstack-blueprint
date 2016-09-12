@@ -1,0 +1,18 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  example_openstack_key:
+    default: openstack-fortigate-key
+
+  example_openstack_key_file:
+    default: ~/.ssh/example-openstack-key.pem
+
+node_templates:
+
+  example_openstack_key:
+    type: cloudify.openstack.nodes.KeyPair
+    properties:
+      openstack_config: { get_input: openstack_configuration }
+      resource_id: { get_input: example_openstack_key }
+      private_key_path: { get_input: example_openstack_key_file }

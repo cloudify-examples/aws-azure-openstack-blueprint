@@ -2,7 +2,7 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
   - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
-  - http://www.getcloudify.org/spec/aws-plugin/1.4.1/plugin.yaml
+  - http://www.getcloudify.org/spec/aws-plugin/1.4.2/plugin.yaml
   - aws-network-blueprint.yaml
 #  - aws-storage-blueprint.yaml
 
@@ -34,34 +34,46 @@ node_templates:
       aws_config: *AWS_CONFIG
       description: Compute Security Group
       rules:
-        - ip_protocol: tcp
-          from_port: 22
-          to_port: 22
+        - ip_protocol: udp
+          from_port: 1
+          to_port: 65535
           cidr_ip: 0.0.0.0/0
         - ip_protocol: tcp
-          from_port: 80
-          to_port: 80
+          from_port: 1
+          to_port: 65535
           cidr_ip: 0.0.0.0/0
-        - ip_protocol: tcp
-          from_port: 443
-          to_port: 443
+        - ip_protocol: icmp
+          from_port: 1
+          to_port: 32
           cidr_ip: 0.0.0.0/0
-        - ip_protocol: tcp
-          from_port: 8101
-          to_port: 8101
-          cidr_ip: { get_property: [aws_vpc, cidr_block] }
-        - ip_protocol: tcp
-          from_port: 5672
-          to_port: 5672
-          cidr_ip: { get_property: [aws_vpc, cidr_block] }
-        - ip_protocol: tcp
-          from_port: 5985
-          to_port: 5985
-          cidr_ip: { get_property: [aws_vpc, cidr_block] }
-        - ip_protocol: tcp
-          from_port: 53229
-          to_port: 53229
-          cidr_ip: { get_property: [aws_vpc, cidr_block] }
+#        - ip_protocol: tcp
+#          from_port: 22
+#          to_port: 22
+#          cidr_ip: 0.0.0.0/0
+#        - ip_protocol: tcp
+#          from_port: 80
+#          to_port: 80
+#          cidr_ip: 0.0.0.0/0
+#        - ip_protocol: tcp
+#          from_port: 443
+#          to_port: 443
+#          cidr_ip: 0.0.0.0/0
+#        - ip_protocol: tcp
+#          from_port: 8101
+#          to_port: 8101
+#          cidr_ip: { get_property: [aws_vpc, cidr_block] }
+#        - ip_protocol: tcp
+#          from_port: 5672
+#          to_port: 5672
+#          cidr_ip: { get_property: [aws_vpc, cidr_block] }
+#        - ip_protocol: tcp
+#          from_port: 5985
+#          to_port: 5985
+#          cidr_ip: { get_property: [aws_vpc, cidr_block] }
+#        - ip_protocol: tcp
+#          from_port: 53229
+#          to_port: 53229
+#          cidr_ip: { get_property: [aws_vpc, cidr_block] }
     relationships:
       - type: cloudify.aws.relationships.security_group_contained_in_vpc
         target: aws_vpc

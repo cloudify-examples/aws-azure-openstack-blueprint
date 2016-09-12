@@ -2,7 +2,7 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
   - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
-  - http://www.getcloudify.org/spec/aws-plugin/1.4.1/plugin.yaml
+  - http://www.getcloudify.org/spec/aws-plugin/1.4.2/plugin.yaml
 
 inputs:
 
@@ -133,7 +133,7 @@ node_templates:
     interfaces:
       cloudify.interfaces.lifecycle:
         configure:
-          implementation: aws.ec2.instance.modify_instance_attributes
+          implementation: aws.cloudify_aws.ec2.instance.modify_attributes
           inputs:
             new_attributes:
               sourceDestCheck: false
@@ -161,7 +161,7 @@ node_templates:
     interfaces:
       cloudify.interfaces.lifecycle:
         create:
-          implementation: aws.vpc.routetable.create_route_table
+          implementation: aws.cloudify_aws.vpc.routetable.create_route_table
           inputs:
             routes:
               - destination_cidr_block: 0.0.0.0/0

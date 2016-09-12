@@ -1,0 +1,25 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports: {}
+
+inputs:
+
+  use_existing_example_openstack_network_router:
+    type: boolean
+    default: false
+
+  example_openstack_network_router_name:
+    type: string
+    default: 'openstack-example-network-router'
+
+node_templates:
+
+  example_openstack_network_router:
+    type: cloudify.openstack.nodes.Router
+    properties:
+      openstack_config: { get_input: openstack_configuration }
+      use_external_resource: { get_input: use_existing_example_openstack_network_router }
+      resource_id: { get_input: example_openstack_network_router_name }
+    relationships:
+      - target: example_openstack_external_network
+        type: cloudify.relationships.connected_to
