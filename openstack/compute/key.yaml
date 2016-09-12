@@ -3,7 +3,7 @@ tosca_definitions_version: cloudify_dsl_1_3
 inputs:
 
   example_openstack_key:
-    default: openstack-fortigate-key
+    default: example-openstack-key
 
   example_openstack_key_file:
     default: ~/.ssh/example-openstack-key.pem
