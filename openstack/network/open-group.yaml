@@ -2,12 +2,12 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 inputs:
 
-  use_existing_openstack_main_troubleshooting_group:
+  use_existing_example_openstack_group:
     type: boolean
     default: false
 
-  openstack_main_troubleshooting_group:
-    default: 'openstack-open-group'
+  example_openstack_group_name:
+    default: 'example-openstack-group'
 
   openstack_open_group_rules:
     default:
@@ -30,6 +30,6 @@ node_templates:
     type: cloudify.openstack.nodes.SecurityGroup
     properties:
       openstack_config: { get_input: openstack_configuration }
-      use_external_resource: { get_input: use_existing_openstack_main_troubleshooting_group }
-      resource_id: { get_input: openstack_main_troubleshooting_group }
+      use_external_resource: { get_input: use_existing_example_openstack_group }
+      resource_id: { get_input: example_openstack_group_name }
       rules: { get_input: openstack_open_group_rules }
