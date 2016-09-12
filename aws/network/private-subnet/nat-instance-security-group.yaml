@@ -1,0 +1,45 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_aws_nat_instance_group:
+    description: >
+      If you have an existing security group that you want to use this should be true.
+    default: false
+
+  existing_example_aws_nat_instance_group_id:
+    description: >
+      If you changed existing_example_aws_nat_instance_group_id to true, then this is the route table ID.
+    default: ''
+
+  example_aws_nat_instance_security_group_description:
+    description: >
+      A description of the security group.
+    default: 'AWS VPC NAT Instance Security Group'
+
+  example_aws_nat_instance_security_groups:
+    description: >
+      A list of rules.
+    default:
+      - ip_protocol: tcp
+        from_port: 0
+        to_port: 65535
+        cidr_ip: 0.0.0.0/0
+      - ip_protocol: udp
+        from_port: 0
+        to_port: 65535
+        cidr_ip: 0.0.0.0/0
+
+node_templates:
+
+  example_aws_nat_instance_security_group:
+    type: cloudify.aws.nodes.SecurityGroup
+    properties:
+      aws_config: { get_input: aws_configuration }
+      use_external_resource: { get_input: use_existing_example_aws_nat_instance_group }
+      resource_id: { get_input: existing_example_aws_nat_instance_group_id }
+      description: { get_input: example_aws_nat_instance_security_group_description }
+      rules: { get_input: example_aws_nat_instance_security_groups }
+    relationships:
+      - type: cloudify.aws.relationships.security_group_contained_in_vpc
+        target: example_aws_vpc

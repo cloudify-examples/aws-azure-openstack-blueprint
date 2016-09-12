@@ -1,0 +1,29 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_aws_nat_instance_elastic_ip:
+    description: >
+      If you have an existing elastic ip attached to the nat instance that you want to use this should be true.
+    default: false
+
+  existing_example_aws_nat_instance_elastic_ip:
+    description: >
+      If you changed use_existing_example_aws_nat_instance_elastic_ip to true, then this is the elastic ip ID.
+    default: ''
+
+  existing_example_aws_nat_instance_elastic_ip_domain:
+    default: 'vpc'
+
+node_templates:
+
+  example_aws_nat_instance_elastic_ip:
+    type: cloudify.aws.nodes.ElasticIP
+    properties:
+      aws_config: { get_input: aws_configuration }
+      use_external_resource: { get_input: use_existing_example_aws_nat_instance_elastic_ip }
+      resource_id: { get_input: existing_example_aws_nat_instance_elastic_ip }
+      domain: { get_input: existing_example_aws_nat_instance_elastic_ip_domain }
+    relationships:
+      - type: cloudify.relationships.depends_on
+        target: example_aws_internet_gateway

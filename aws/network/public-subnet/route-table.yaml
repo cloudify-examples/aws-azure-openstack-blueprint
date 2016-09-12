@@ -1,0 +1,31 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports: []
+
+inputs:
+
+  use_existing_example_aws_public_route_table:
+    description: >
+      If you have an existing public route table that you want to use this should be true.
+    default: false
+
+  example_public_route_table_id:
+    description: >
+      If you changed use_existing_example_aws_public_route_table to true, then this is the route table ID.
+    default: ''
+
+node_templates:
+
+  example_aws_public_route_table:
+    type: cloudify.aws.nodes.RouteTable
+    properties:
+      aws_config: { get_input: aws_configuration }
+      use_external_resource: { get_input: use_existing_example_aws_public_route_table }
+      resource_id: { get_input: example_public_route_table_id }
+    relationships:
+      - type: cloudify.aws.relationships.routetable_contained_in_vpc
+        target: example_aws_vpc
+      - type: cloudify.aws.relationships.routetable_associated_with_subnet
+        target: example_aws_public_subnet
+      - type: cloudify.aws.relationships.route_table_to_gateway
+        target: example_aws_internet_gateway

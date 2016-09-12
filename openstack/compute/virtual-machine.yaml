@@ -10,10 +10,10 @@ inputs:
     type: string
     default: ''
 
-  openstack_fortigate_virtual_machine_image_id:
+  example_openstack_virtual_machine_image_id:
     type: string
 
-  openstack_fortigate_virtual_machine_flavor_id:
+  example_openstack_virtual_machine_flavor_id:
     type: string
 
 node_templates:
@@ -26,8 +26,8 @@ node_templates:
       resource_id: { get_input: example_openstack_virtual_machine }
       install_agent: false
       server:
-        image: { get_input: openstack_fortigate_virtual_machine_image_id }
-        flavor: { get_input: openstack_fortigate_virtual_machine_flavor_id }
+        image: { get_input: example_openstack_virtual_machine_image_id }
+        flavor: { get_input: example_openstack_virtual_machine_flavor_id }
       management_network_name: { get_property: [ example_openstack_network, resource_id ] }
     relationships:
       - target: example_openstack_key
