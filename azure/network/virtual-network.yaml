@@ -1,0 +1,23 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_azure_virtual_network:
+    default: false
+
+  example_azure_virtual_network_name:
+    default: { concat: [ { get_input: resource_prefix }, 'eavn', { get_input: resource_suffix } ] }
+
+node_templates:
+
+  example_azure_virtual_network:
+    type: cloudify.azure.nodes.network.VirtualNetwork
+    properties:
+      azure_config: { get_input: azure_configuration }
+      use_external_resource: { get_input: use_existing_example_azure_virtual_network }
+      name: { get_input: example_azure_virtual_network_name }
+      location: { get_input: location }
+      retry_after: { get_input: retry_after }
+    relationships:
+      - type: cloudify.azure.relationships.contained_in_resource_group
+        target: example_azure_resource_group

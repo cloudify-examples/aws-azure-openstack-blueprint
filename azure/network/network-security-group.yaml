@@ -1,0 +1,50 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_azure_network_security_group:
+    default: false
+
+  example_azure_network_security_group_name:
+    default: { concat: [ { get_input: resource_prefix }, 'eansg', { get_input: resource_suffix } ] }
+
+  example_azure_network_security_group_rules:
+    default:
+      - name: all_tcp
+        properties:
+          description: All TCP
+          protocol: Tcp
+          sourcePortRange: '*'
+          destinationPortRange: '*'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          priority: 100
+          access: Allow
+          direction: Inbound
+      - name: all_ucp
+        properties:
+          description: All UDP
+          protocol: Udp
+          sourcePortRange: '*'
+          destinationPortRange: '*'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          priority: 101
+          access: Allow
+          direction: Inbound
+
+node_templates:
+
+  example_azure_network_security_group:
+    type: cloudify.azure.nodes.network.NetworkSecurityGroup
+    properties:
+      azure_config: { get_input: azure_configuration }
+      use_external_resource: { get_input: use_existing_example_azure_network_security_group }
+      name: { get_input: example_azure_network_security_group_name }
+      location: { get_input: location }
+      retry_after: { get_input: retry_after }
+      resource_config:
+        securityRules: { get_input: example_azure_network_security_group_rules }
+    relationships:
+    - type: cloudify.azure.relationships.contained_in_resource_group
+      target: example_azure_resource_group

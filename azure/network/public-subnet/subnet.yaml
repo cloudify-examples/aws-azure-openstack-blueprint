@@ -1,0 +1,28 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_azure_public_subnet:
+    default: false
+
+  example_azure_public_subnet_name:
+    default: { concat: [ { get_input: resource_prefix }, 'eaps', { get_input: resource_suffix } ] }
+
+  example_public_subnet_cidr:
+    default: 10.10.1.0/24
+
+node_templates:
+
+  example_azure_public_subnet:
+    type: cloudify.azure.nodes.network.Subnet
+    properties:
+      azure_config: { get_input: azure_configuration }
+      use_external_resource: { get_input: use_existing_example_azure_public_subnet }
+      name: { get_input: example_azure_public_subnet_name }
+      location: { get_input: location }
+      retry_after: { get_input: retry_after }
+      resource_config:
+        addressPrefix: { get_input: example_public_subnet_cidr }
+    relationships:
+    - type: cloudify.azure.relationships.contained_in_virtual_network
+      target: example_azure_virtual_network
