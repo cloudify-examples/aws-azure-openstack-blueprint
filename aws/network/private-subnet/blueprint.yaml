@@ -1,0 +1,8 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - subnet.yaml
+  - route-table.yaml
+  - nat-instance-security-group.yaml
+  - nat-instance-elastic-ip.yaml
+  - nat-instance.yaml

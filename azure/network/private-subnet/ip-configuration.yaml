@@ -1,0 +1,30 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_azure_private_ip_configuration:
+    default: false
+
+  example_azure_private_ip_configuration_name:
+    default: { concat: [ { get_input: resource_prefix }, 'eapic', { get_input: resource_suffix } ] }
+
+  example_azure_private_ip_configuration_allocation_method:
+    default: Dynamic
+
+node_templates:
+
+  example_azure_private_ip_configuration:
+    type: cloudify.azure.nodes.network.IPConfiguration
+    properties:
+      azure_config: { get_input: azure_configuration }
+      use_external_resource: { get_input: use_existing_example_azure_private_ip_configuration }
+      name: { get_input: example_azure_private_ip_configuration_name }
+      location: { get_input: location }
+      retry_after: { get_input: retry_after }
+      resource_config:
+        privateIPAllocationMethod: { get_input: example_azure_private_ip_configuration_allocation_method }
+    relationships:
+      - type: cloudify.azure.relationships.contained_in_resource_group
+        target: example_azure_resource_group
+      - type: cloudify.azure.relationships.ip_configuration_connected_to_subnet
+        target: example_azure_private_subnet

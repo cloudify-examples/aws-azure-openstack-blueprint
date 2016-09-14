@@ -1,0 +1,38 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-azure-plugin/1.4.1.dev0/plugin.yaml
+
+inputs:
+
+  subscription_id:
+    type: string
+
+  tenant_id:
+    type: string
+
+  client_id:
+    type: string
+
+  client_secret:
+    type: string
+
+  location:
+    default: eastus
+
+  retry_after:
+    default: 30
+
+  resource_prefix:
+    default: ex
+
+  resource_suffix:
+    default: 0
+
+  azure_configuration:
+    default:
+      subscription_id: { get_input: subscription_id }
+      tenant_id: { get_input: tenant_id }
+      client_id: { get_input: client_id }
+      client_secret: { get_input: client_secret }

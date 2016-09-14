@@ -5,6 +5,6 @@ description: >
 
 imports:
   - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
-  - aws-compute-blueprint.yaml
-  - azure-compute-blueprint.yaml
-  - openstack-compute-blueprint.yaml
+  - aws/blueprint.yaml
+  - azure/blueprint.yaml
+  - openstack/blueprint.yaml

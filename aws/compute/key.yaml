@@ -1,0 +1,21 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+  use_existing_example_aws_key:
+    default: false
+
+  example_aws_key:
+    default: example-aws-key
+
+  example_aws_key_file:
+    default: ~/.ssh/example-aws-key.pem
+
+node_templates:
+
+  example_aws_key:
+    type: cloudify.aws.nodes.KeyPair
+    properties:
+      aws_config: { get_input: aws_configuration }
+      use_external_resource: { get_input: use_existing_example_aws_key }
+      resource_id: { get_input: example_aws_key }
+      private_key_path: { get_input: example_aws_key_file }

@@ -1,0 +1,50 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_aws_nat_instance:
+    description: >
+      If you have an existing nat instance that you want to use this should be true.
+    default: false
+
+  existing_example_aws_nat_instance_id:
+    description: >
+      If you changed existing_example_aws_nat_instance_group_id to true, then this is the route table ID.
+    default: ''
+
+  example_aws_nat_instance_name:
+    default: 'example-aws-nat-instance'
+
+  nat_image_id:
+    default: ami-c02b04a8
+
+  example_aws_nat_instance_type:
+    default: t1.micro
+
+node_templates:
+
+  example_aws_nat_instance:
+    type: cloudify.aws.nodes.Instance
+    properties:
+      aws_config: { get_input: aws_configuration }
+      use_external_resource: { get_input: use_existing_example_aws_nat_instance }
+      resource_id: { get_input: existing_example_aws_nat_instance_id }
+      name: { get_input: example_aws_nat_instance_name }
+      image_id: { get_input: nat_image_id }
+      instance_type: { get_input: example_aws_nat_instance_type }
+      agent_config:
+        install_method: none
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: aws.cloudify_aws.ec2.instance.modify_attributes
+          inputs:
+            new_attributes:
+              sourceDestCheck: false
+    relationships:
+      - type: cloudify.aws.relationships.instance_contained_in_subnet
+        target: example_aws_private_subnet
+      - type: cloudify.aws.relationships.instance_connected_to_elastic_ip
+        target: example_aws_nat_instance_elastic_ip
+      - type: cloudify.aws.relationships.instance_connected_to_security_group
+        target: example_aws_nat_instance_security_group

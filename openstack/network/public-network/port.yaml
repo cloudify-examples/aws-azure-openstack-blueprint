@@ -1,0 +1,34 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_openstack_network_port:
+    type: boolean
+    default: false
+
+  example_openstack_network_port:
+    type: string
+    default: 'openstack-example-network-port'
+
+  example_openstack_network_port_fixed_ip:
+    type: string
+    default: 192.168.121.254
+
+node_templates:
+
+  example_openstack_network_port:
+    type: cloudify.openstack.nodes.Port
+    properties:
+      openstack_config: { get_input: openstack_configuration }
+      use_external_resource: { get_input: use_existing_example_openstack_network_port }
+      resource_id: { get_input: example_openstack_network_port }
+      fixed_ip: { get_input: example_openstack_network_port_fixed_ip }
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: example_openstack_network
+      - type: cloudify.relationships.depends_on
+        target: example_openstack_network_subnet
+      - type: cloudify.openstack.port_connected_to_security_group
+        target: example_openstack_group
+      - type: cloudify.openstack.port_connected_to_floating_ip
+        target: example_openstack_floating_ip

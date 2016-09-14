@@ -1,0 +1,22 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_azure_availability_set:
+    default: false
+
+  example_azure_availability_set_name:
+    default: { concat: [ { get_input: resource_prefix }, 'eaas', { get_input: resource_suffix } ] }
+
+node_templates:
+
+  example_azure_availability_set:
+    type: cloudify.azure.nodes.compute.AvailabilitySet
+    properties:
+      azure_config: { get_input: azure_configuration }
+      use_external_resource: { get_input: use_existing_example_azure_availability_set }
+      name: { get_input: example_azure_availability_set_name }
+      location: { get_input: location }
+    relationships:
+    - type: cloudify.azure.relationships.contained_in_resource_group
+      target: example_azure_resource_group

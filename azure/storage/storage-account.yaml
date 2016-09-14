@@ -1,0 +1,27 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_azure_storage_account:
+    default: false
+
+  example_azure_storage_account_name:
+    default: ''
+
+  example_azure_storage_account_type:
+    default: Standard_LRS
+
+node_templates:
+
+  example_azure_storage_account:
+    type: cloudify.azure.nodes.storage.StorageAccount
+    properties:
+      azure_config: { get_input: azure_configuration }
+      use_external_resource: { get_input: use_existing_example_azure_storage_account }
+      name: { get_input: example_azure_storage_account_name }
+      location: { get_input: location }
+      resource_config:
+        accountType: { get_input: example_azure_storage_account_type }
+    relationships:
+      - type: cloudify.azure.relationships.contained_in_resource_group
+        target: example_azure_resource_group

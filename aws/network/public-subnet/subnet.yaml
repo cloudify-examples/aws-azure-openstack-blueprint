@@ -1,0 +1,33 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_aws_public_subnet:
+    description: >
+      If you have an existing public subnet on an existing VPC that you want to use this should be true.
+    default: false
+
+  example_aws_public_subnet_id:
+    description: >
+      If you changed use_existing_example_aws_public_subnet to true, then this is the subnet ID.
+    default: ''
+
+  example_aws_public_subnet_cidr:
+    default: 10.0.0.0/24
+
+  example_aws_public_subnet_availability_zone:
+    default: us-east-1e
+
+node_templates:
+
+  example_aws_public_subnet:
+    type: cloudify.aws.nodes.Subnet
+    properties:
+      aws_config: { get_input: aws_configuration }
+      use_external_resource: { get_input: use_existing_example_aws_public_subnet }
+      resource_id: { get_input: example_aws_public_subnet_id }
+      cidr_block: { get_input: example_aws_public_subnet_cidr }
+      availability_zone: { get_input: example_aws_public_subnet_availability_zone }
+    relationships:
+      - type: cloudify.aws.relationships.subnet_contained_in_vpc
+        target: example_aws_vpc

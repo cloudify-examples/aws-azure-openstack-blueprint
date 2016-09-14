@@ -1,0 +1,8 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - vpc.yaml
+  - dhcp-options-set.yaml
+  - public-subnet/blueprint.yaml
+  - private-subnet/blueprint.yaml
+

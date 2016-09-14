@@ -1,0 +1,10 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+node_templates:
+
+  example_openstack_floating_ip:
+    type: cloudify.openstack.nodes.FloatingIP
+    properties:
+      openstack_config: { get_input: openstack_configuration }
+      floatingip:
+        floating_network_name: { get_input: example_openstack_external_network_name }

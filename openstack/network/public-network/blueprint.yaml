@@ -1,0 +1,8 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - router.yaml
+  - network.yaml
+  - subnet.yaml
+  - floating-ip.yaml
+  - port.yaml

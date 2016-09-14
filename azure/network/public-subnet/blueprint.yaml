@@ -1,0 +1,7 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - subnet.yaml
+  - public-ip-address.yaml
+  - ip-configuration.yaml
+  - nic.yaml

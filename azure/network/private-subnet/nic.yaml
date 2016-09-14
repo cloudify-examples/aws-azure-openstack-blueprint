@@ -1,0 +1,31 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_azure_private_nic:
+    default: false
+
+  example_azure_virtual_private_nic_name:
+    default: { concat: [ { get_input: resource_prefix }, 'eapn', { get_input: resource_suffix } ] }
+
+  example_azure_virtual_private_nic_primary:
+    default: false
+
+node_templates:
+
+  example_azure_private_nic:
+    type: cloudify.azure.nodes.network.NetworkInterfaceCard
+    properties:
+      azure_config: { get_input: azure_configuration }
+      use_external_resource: { get_input: use_existing_example_azure_private_nic }
+      name: { get_input: example_azure_virtual_private_nic_name }
+      location: { get_input: location }
+      retry_after: { get_input: retry_after }
+      primary: { get_input: example_azure_virtual_private_nic_primary }
+    relationships:
+      - type: cloudify.azure.relationships.nic_connected_to_ip_configuration
+        target: example_azure_private_ip_configuration
+      - type: cloudify.azure.relationships.contained_in_resource_group
+        target: example_azure_resource_group
+      - type: cloudify.azure.relationships.nic_connected_to_network_security_group
+        target: example_azure_network_security_group

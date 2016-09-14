@@ -1,0 +1,45 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_openstack_network_subnet:
+    type: boolean
+    default: false
+
+  example_openstack_network_subnet:
+    type: string
+    default: 'openstack-example-network-subnet'
+
+  example_openstack_network_subnet_ipversion:
+    default: 4
+
+  example_openstack_network_subnet_cidr:
+    type: string
+    default: 192.168.121.0/24
+
+  example_openstack_network_subnet_dnsservers:
+    default: [8.8.4.4, 8.8.8.8]
+
+  example_openstack_network_subnet_allocation_pools:
+    default:
+      - start: 192.168.121.50
+        end: 192.168.121.250
+
+node_templates:
+
+  example_openstack_network_subnet:
+    type: cloudify.openstack.nodes.Subnet
+    properties:
+      openstack_config: { get_input: openstack_configuration }
+      use_external_resource: { get_input: use_existing_example_openstack_network_subnet }
+      resource_id: { get_input: example_openstack_network_subnet }
+      subnet:
+        ip_version: { get_input: example_openstack_network_subnet_ipversion }
+        cidr: { get_input: example_openstack_network_subnet_cidr }
+        dns_nameservers: { get_input: example_openstack_network_subnet_dnsservers }
+        allocation_pools: { get_input: example_openstack_network_subnet_allocation_pools }
+    relationships:
+      - target: example_openstack_network
+        type: cloudify.relationships.contained_in
+      - target: example_openstack_network_router
+        type: cloudify.openstack.subnet_connected_to_router

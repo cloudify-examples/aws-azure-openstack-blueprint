@@ -1,0 +1,65 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_openstack_private_network_subnet:
+    type: boolean
+    default: false
+
+  example_openstack_private_network_subnet:
+    type: string
+    default: 'example-openstack-private-network-subnet'
+
+  example_openstack_private_network_subnet_ipversion:
+    default: 4
+
+  example_openstack_private_network_subnet_cidr:
+    type: string
+    default: 11.11.11.0
+
+  example_openstack_private_network_subnet_cidr_suffix:
+    type: string
+    default: 24
+
+  example_openstack_private_network_subnet_cidr_netmask:
+    type: string
+    default: 255.255.255.0
+
+  example_openstack_private_network_subnet_enable_dhcp:
+    type: string
+    default: false
+
+  example_openstack_private_network_subnet_gateway_ip:
+    type: string
+    default: 11.11.11.254
+
+  example_openstack_private_network_subnet_dnsservers:
+    default: [8.8.4.4, 8.8.8.8]
+
+  example_openstack_private_network_subnet_host_routes:
+    default: []
+
+  example_openstack_private_network_subnet_allocation_pools:
+    default:
+      - start: 11.11.11.50
+        end: 11.11.11.250
+
+node_templates:
+
+  example_openstack_private_network_subnet:
+    type: cloudify.openstack.nodes.Subnet
+    properties:
+      openstack_config: { get_input: openstack_configuration }
+      use_external_resource: { get_input: use_existing_example_openstack_private_network_subnet }
+      resource_id: { get_input: example_openstack_private_network_subnet }
+      subnet:
+        ip_version: { get_input: example_openstack_private_network_subnet_ipversion }
+        cidr: { concat: [ { get_input: example_openstack_private_network_subnet_cidr }, '/', { get_input: example_openstack_private_network_subnet_cidr_suffix } ] }
+        enable_dhcp: { get_input: example_openstack_private_network_subnet_enable_dhcp }
+        gateway_ip: { get_input: example_openstack_private_network_subnet_gateway_ip }
+        dns_nameservers: { get_input: example_openstack_private_network_subnet_dnsservers }
+        host_routes: { get_input: example_openstack_private_network_subnet_host_routes }
+        allocation_pools: { get_input: example_openstack_private_network_subnet_allocation_pools }
+    relationships:
+      - target: example_openstack_private_network
+        type: cloudify.relationships.contained_in

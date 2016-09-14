@@ -1,0 +1,20 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_openstack_external_network:
+    type: boolean
+    default: true
+
+  example_openstack_external_network_name:
+    type: string
+    default: external
+
+node_templates:
+
+  example_openstack_external_network:
+    type: cloudify.openstack.nodes.Network
+    properties:
+      openstack_config: { get_input: openstack_configuration }
+      use_external_resource: { get_input: use_existing_example_openstack_external_network }
+      resource_id: { get_input: example_openstack_external_network_name }

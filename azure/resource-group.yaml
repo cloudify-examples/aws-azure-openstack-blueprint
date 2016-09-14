@@ -1,0 +1,19 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_azure_resource_group:
+    default: false
+
+  example_azure_resource_group_name:
+    default: { concat: [ { get_input: resource_prefix }, 'earg', { get_input: resource_suffix } ] }
+
+node_templates:
+
+  example_azure_resource_group:
+    type: cloudify.azure.nodes.ResourceGroup
+    properties:
+      azure_config: { get_input: azure_configuration }
+      use_external_resource: { get_input: use_existing_example_azure_resource_group }
+      name: { get_input: example_azure_resource_group_name }
+      location: { get_input: location }

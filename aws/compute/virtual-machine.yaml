@@ -1,0 +1,42 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_aws_virtual_machine:
+    type: boolean
+    default: false
+
+  example_aws_virtual_machine:
+    type: string
+    default: ''
+
+  example_aws_virtual_machine_image_id:
+    default: ami-165bdf01 # Cloudify Manager AMI
+
+  example_aws_virtual_machine_instance_type:
+    default: m3.large
+
+
+node_templates:
+
+  example_aws_virtual_machine:
+    type: cloudify.aws.nodes.Instance
+    properties:
+      aws_config: { get_input: aws_configuration }
+      use_external_resource: { get_input: use_existing_example_aws_virtual_machine }
+      resource_id: { get_input: example_aws_virtual_machine }
+      agent_config:
+        install_method: none
+      image_id: { get_input: example_aws_virtual_machine_image_id }
+      instance_type: { get_input: example_aws_virtual_machine_instance_type }
+      parameters:
+        placement: { get_property: [ example_aws_public_subnet, availability_zone ] }
+    relationships:
+      - type: cloudify.aws.relationships.instance_contained_in_subnet
+        target: example_aws_public_subnet
+      - type: cloudify.aws.relationships.instance_connected_to_security_group
+        target: example_aws_security_group
+      - type: cloudify.aws.relationships.instance_connected_to_keypair
+        target: example_aws_key
+      - type: cloudify.aws.relationships.instance_connected_to_elastic_ip
+        target: example_aws_elastic_ip

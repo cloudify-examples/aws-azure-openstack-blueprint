@@ -1,0 +1,38 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  use_existing_example_openstack_virtual_machine:
+    type: boolean
+    default: false
+
+  example_openstack_virtual_machine:
+    type: string
+    default: ''
+
+  example_openstack_virtual_machine_image_id:
+    type: string
+
+  example_openstack_virtual_machine_flavor_id:
+    type: string
+
+node_templates:
+
+  example_openstack_virtual_machine:
+    type: cloudify.openstack.nodes.Server
+    properties:
+      openstack_config: { get_input: openstack_configuration }
+      use_external_resource: { get_input: use_existing_example_openstack_virtual_machine }
+      resource_id: { get_input: example_openstack_virtual_machine }
+      install_agent: false
+      server:
+        image: { get_input: example_openstack_virtual_machine_image_id }
+        flavor: { get_input: example_openstack_virtual_machine_flavor_id }
+      management_network_name: { get_property: [ example_openstack_network, resource_id ] }
+    relationships:
+      - target: example_openstack_key
+        type: cloudify.openstack.server_connected_to_keypair
+      - target: example_openstack_network_port
+        type: cloudify.openstack.server_connected_to_port
+      - target: example_openstack_private_network_port
+        type: cloudify.openstack.server_connected_to_port

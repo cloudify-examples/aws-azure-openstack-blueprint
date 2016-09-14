@@ -1,0 +1,7 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - key.yaml
+  - elastic-ip.yaml
+  - security-group.yaml
+  - virtual-machine.yaml
