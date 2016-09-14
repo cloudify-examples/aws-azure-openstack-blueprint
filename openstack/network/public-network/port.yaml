@@ -12,7 +12,7 @@ inputs:
 
   example_openstack_network_port_fixed_ip:
     type: string
-    default: 192.168.121.254
+    default: 192.168.120.254
 
   example_openstack_network_port_address_pairs:
     default: []

@@ -13,7 +13,7 @@ inputs:
     default: ''
 
   example_aws_public_subnet_cidr:
-    default: 10.0.0.0/24
+    default: 192.169.122.0/24
 
   example_aws_public_subnet_availability_zone:
     default: us-east-1e

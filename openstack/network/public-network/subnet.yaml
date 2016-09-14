@@ -15,15 +15,15 @@ inputs:
 
   example_openstack_network_subnet_cidr:
     type: string
-    default: 192.168.121.0/24
+    default: 192.168.120.0/24
 
   example_openstack_network_subnet_dnsservers:
     default: [8.8.4.4, 8.8.8.8]
 
   example_openstack_network_subnet_allocation_pools:
     default:
-      - start: 192.168.121.50
-        end: 192.168.121.250
+      - start: 192.168.120.50
+        end: 192.168.120.250
 
 node_templates:
 
