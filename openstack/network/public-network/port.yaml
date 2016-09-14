@@ -14,6 +14,9 @@ inputs:
     type: string
     default: 192.168.121.254
 
+  example_openstack_network_port_address_pairs:
+    default: []
+
 node_templates:
 
   example_openstack_network_port:
@@ -32,3 +35,10 @@ node_templates:
         target: example_openstack_group
       - type: cloudify.openstack.port_connected_to_floating_ip
         target: example_openstack_floating_ip
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: openstack.neutron_plugin.port.create
+          inputs:
+            args:
+              allowed_address_pairs: { get_input: example_openstack_network_port_address_pairs }

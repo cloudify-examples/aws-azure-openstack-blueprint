@@ -14,6 +14,9 @@ inputs:
     type: string
     default: { get_input: example_openstack_private_network_subnet_gateway_ip }
 
+  example_openstack_private_network_port_address_pairs:
+    default: []
+
 node_templates:
 
   example_openstack_private_network_port:
@@ -30,3 +33,10 @@ node_templates:
         target: example_openstack_private_network_subnet
       - type: cloudify.openstack.port_connected_to_security_group
         target: example_openstack_group
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: openstack.neutron_plugin.port.create
+          inputs:
+            args:
+              allowed_address_pairs: { get_input: example_openstack_private_network_port_address_pairs }
