@@ -13,7 +13,7 @@ inputs:
     default: ''
 
   example_aws_vpc_cidr:
-    default: 192.169.0.0/16
+    default: 172.16.0.0/16
 
 node_templates:
 
