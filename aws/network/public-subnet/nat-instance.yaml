@@ -16,7 +16,7 @@ inputs:
     default: 'example-aws-nat-instance'
 
   nat_image_id:
-    default: ami-c02b04a8
+    default: ami-224dc94a
 
   example_aws_nat_instance_type:
     default: t1.micro
@@ -43,7 +43,7 @@ node_templates:
               sourceDestCheck: false
     relationships:
       - type: cloudify.aws.relationships.instance_contained_in_subnet
-        target: example_aws_private_subnet
+        target: example_aws_public_subnet
       - type: cloudify.aws.relationships.instance_connected_to_elastic_ip
         target: example_aws_nat_instance_elastic_ip
       - type: cloudify.aws.relationships.instance_connected_to_security_group
