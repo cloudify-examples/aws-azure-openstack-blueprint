@@ -1,7 +1,7 @@
 tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
-  - imports.yaml
+  - azure-imports.yaml
   - resource-group.yaml
   - network/blueprint.yaml
   - storage/blueprint.yaml

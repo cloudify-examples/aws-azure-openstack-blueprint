@@ -1,3 +1,5 @@
+[![Build Status](https://circleci.com/gh/cloudify-examples/aws-azure-openstack-blueprint.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/cloudify-examples/aws-azure-openstack-blueprint)
+
 # composition-blueprint
 
 This blueprint creates a multi-subnet network with a single instance.
