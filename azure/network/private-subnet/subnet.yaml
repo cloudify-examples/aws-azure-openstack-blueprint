@@ -26,3 +26,5 @@ node_templates:
     relationships:
     - type: cloudify.azure.relationships.contained_in_virtual_network
       target: example_azure_virtual_network
+    - type: cloudify.relationships.depends_on
+      target: example_azure_public_subnet
