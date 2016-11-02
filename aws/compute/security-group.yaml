@@ -2,8 +2,6 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 inputs:
 
-inputs:
-
   use_existing_example_aws_security_group:
     description: >
       If you have a VPC that you want to use this should be true.
