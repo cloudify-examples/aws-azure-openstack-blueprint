@@ -23,3 +23,9 @@ node_templates:
     relationships:
       - target: example_openstack_external_network
         type: cloudify.relationships.connected_to
+
+outputs:
+  example_openstack_network_router:
+    description: Openstack Router
+    value:
+      example_openstack_network_router: { get_attribute: [ example_openstack_network_router, external_id ] }

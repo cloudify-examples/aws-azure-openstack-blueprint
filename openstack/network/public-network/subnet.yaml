@@ -43,3 +43,9 @@ node_templates:
         type: cloudify.relationships.contained_in
       - target: example_openstack_network_router
         type: cloudify.openstack.subnet_connected_to_router
+
+outputs:
+  example_openstack_network_subnet:
+    description: Openstack Public Subnet
+    value:
+      example_openstack_network_subnet: { get_attribute: [ example_openstack_network_subnet, external_id ] }

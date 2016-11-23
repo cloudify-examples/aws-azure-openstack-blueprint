@@ -40,3 +40,10 @@ node_templates:
     relationships:
       - type: cloudify.aws.relationships.security_group_contained_in_vpc
         target: example_aws_vpc
+
+outputs:
+
+  example_aws_security_group:
+    description: AWS Security Group ID
+    value:
+      example_aws_security_group: { get_attribute: [ example_aws_security_group, aws_resource_id ] }

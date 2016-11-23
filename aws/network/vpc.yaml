@@ -24,3 +24,10 @@ node_templates:
       use_external_resource: { get_input: use_existing_example_aws_vpc }
       resource_id: { get_input: example_aws_vpc_id }
       cidr_block: { get_input: example_aws_vpc_cidr }
+
+outputs:
+
+  example_aws_vpc:
+    description: AWS VPC
+    value:
+      example_aws_vpc: { get_attribute: [ example_aws_vpc, aws_resource_id ] }
