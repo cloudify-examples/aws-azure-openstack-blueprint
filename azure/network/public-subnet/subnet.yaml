@@ -26,3 +26,9 @@ node_templates:
     relationships:
     - type: cloudify.azure.relationships.contained_in_virtual_network
       target: example_azure_virtual_network
+
+outputs:
+  example_azure_public_subnet:
+    description: Azure Public Subnet
+    value:
+      example_azure_public_subnet: { get_attribute: [ example_azure_public_subnet, name ] }

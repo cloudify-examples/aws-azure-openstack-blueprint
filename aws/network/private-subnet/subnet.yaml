@@ -31,3 +31,10 @@ node_templates:
     relationships:
       - type: cloudify.aws.relationships.subnet_contained_in_vpc
         target: example_aws_vpc
+
+outputs:
+
+  example_aws_private_subnet:
+    description: AWS Private Subnet
+    value:
+      example_aws_private_subnet: { get_attribute: [ example_aws_private_subnet, aws_resource_id ] }

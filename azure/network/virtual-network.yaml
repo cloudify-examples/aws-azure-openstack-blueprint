@@ -21,3 +21,9 @@ node_templates:
     relationships:
       - type: cloudify.azure.relationships.contained_in_resource_group
         target: example_azure_resource_group
+
+outputs:
+  example_azure_virtual_network:
+    description: Azure VNET
+    value:
+      example_azure_virtual_network: { get_attribute: [ example_azure_virtual_network, name ] }

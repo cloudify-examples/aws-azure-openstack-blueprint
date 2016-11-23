@@ -33,3 +33,9 @@ node_templates:
       use_external_resource: { get_input: use_existing_example_openstack_group }
       resource_id: { get_input: example_openstack_group_name }
       rules: { get_input: openstack_open_group_rules }
+
+outputs:
+  example_openstack_group:
+    description: Openstack Security Group
+    value:
+      example_openstack_group: { get_attribute: [ example_openstack_group, external_id ] }

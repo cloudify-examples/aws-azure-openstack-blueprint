@@ -18,3 +18,9 @@ node_templates:
       openstack_config: { get_input: openstack_configuration }
       use_external_resource: { get_input: use_existing_example_openstack_private_network }
       resource_id: { get_input: example_openstack_private_network_name }
+
+outputs:
+  example_openstack_private_network:
+    description: Openstack Private Network
+    value:
+      example_openstack_private_network: { get_attribute: [ example_openstack_private_network, external_id ] }

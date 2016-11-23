@@ -63,3 +63,9 @@ node_templates:
     relationships:
       - target: example_openstack_private_network
         type: cloudify.relationships.contained_in
+
+outputs:
+  example_openstack_private_network_subnet:
+    description: Openstack Public Subnet
+    value:
+      example_openstack_private_network_subnet: { get_attribute: [ example_openstack_private_network_subnet, external_id ] }

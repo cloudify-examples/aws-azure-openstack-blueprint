@@ -17,3 +17,9 @@ node_templates:
       use_external_resource: { get_input: use_existing_example_azure_resource_group }
       name: { get_input: example_azure_resource_group_name }
       location: { get_input: location }
+
+outputs:
+  example_azure_resource_group:
+    description: Azure Resource Group
+    value:
+      example_azure_resource_group: { get_attribute: [ example_azure_resource_group, name ] }
