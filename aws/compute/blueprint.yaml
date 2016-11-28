@@ -5,3 +5,4 @@ imports:
   - elastic-ip.yaml
   - security-group.yaml
   - virtual-machine.yaml
+  - windows-virtual-machine.yaml

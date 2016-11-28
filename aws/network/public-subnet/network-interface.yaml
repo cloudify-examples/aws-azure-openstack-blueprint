@@ -1,0 +1,26 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - https://raw.githubusercontent.com/cloudify-examples/aws-plugin-eni-ext/master/plugin.yaml
+
+inputs:
+
+  use_existing_example_aws_network_interface:
+    default: false
+
+  example_aws_network_interface_id:
+    default: ''
+
+node_templates:
+
+  example_aws_network_interface:
+    type: cloudify.aws.nodes.Interface
+    properties:
+      aws_config: { get_input: aws_configuration }
+      use_external_resource: { get_input: use_existing_example_aws_network_interface }
+      resource_id: { get_input: example_aws_network_interface_id }
+    relationships:
+      - target: example_aws_public_subnet
+        type: cloudify.aws.relationships.connected_to_subnet
+      - target: example_aws_windows_virtual_machine
+        type: cloudify.aws.relationships.eni_connected_to_instance
