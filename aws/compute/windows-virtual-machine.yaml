@@ -16,11 +16,13 @@ inputs:
   example_aws_windows_virtual_machine_instance_type:
     default: t2.medium
 
+  example_aws_windows_virtual_machine_user_data:
+    default: ''
 
 node_templates:
 
   example_aws_windows_virtual_machine:
-    type: cloudify.aws.nodes.Instance
+    type: cloudify.aws.nodes.WindowsInstance
     properties:
       aws_config: { get_input: aws_configuration }
       use_external_resource: { get_input: use_existing_example_aws_windows_virtual_machine }
@@ -30,6 +32,7 @@ node_templates:
       image_id: { get_input: example_aws_windows_virtual_machine_image_id }
       instance_type: { get_input: example_aws_windows_virtual_machine_instance_type }
       parameters:
+        user_data: { get_input: example_aws_windows_virtual_machine_user_data }
         placement: { get_property: [ example_aws_public_subnet, availability_zone ] }
     relationships:
       - type: cloudify.aws.relationships.instance_contained_in_subnet
