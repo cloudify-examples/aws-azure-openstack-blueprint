@@ -16,6 +16,8 @@ inputs:
   example_aws_virtual_machine_instance_type:
     default: m3.large
 
+  example_aws_virtual_machine_name:
+    default: ''
 
 node_templates:
 
@@ -25,6 +27,7 @@ node_templates:
       aws_config: { get_input: aws_configuration }
       use_external_resource: { get_input: use_existing_example_aws_virtual_machine }
       resource_id: { get_input: example_aws_virtual_machine }
+      name: { get_input: example_aws_virtual_machine_name }
       agent_config:
         install_method: none
       image_id: { get_input: example_aws_virtual_machine_image_id }
