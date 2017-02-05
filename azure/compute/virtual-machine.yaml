@@ -55,6 +55,34 @@ inputs:
     type: boolean
     default: true
 
+  example_azure_virtual_machine_resource_config_hardware_profile:
+    default:
+      vmSize: { get_input: example_azure_virtual_machine_size }
+
+  example_azure_virtual_machine_resource_config_storage_profile:
+    default:
+      imageReference:
+        publisher: { get_input: example_azure_virtual_machine_image_publisher }
+        offer: { get_input: example_azure_virtual_machine_image_offer }
+        sku: { get_input: example_azure_virtual_machine_image_sku }
+        version: { get_input: example_azure_virtual_machine_image_version }
+
+  example_azure_virtual_machine_resource_config_os_profile:
+    default:
+      computerName: { get_property: [SELF, name] }
+      adminUsername: { get_input: example_azure_virtual_machine_username }
+      adminPassword: { get_input: example_azure_virtual_machine_password }
+      linuxConfiguration:
+        ssh:
+          publicKeys: { get_input: example_azure_virtual_machine_public_keys }
+        disablePasswordAuthentication: { get_input: example_azure_virtual_machine_public_key_auth_only }
+
+  example_azure_virtual_machine_resource_config:
+    default:
+      hardwareProfile: { get_input: example_azure_virtual_machine_resource_config_hardware_profile }
+      storageProfile: { get_input: example_azure_virtual_machine_resource_config_storage_profile }
+      osProfile: { get_input: example_azure_virtual_machine_resource_config_os_profile }
+
 node_templates:
 
   example_azure_virtual_machine:
@@ -65,23 +93,7 @@ node_templates:
       name: { get_input: example_azure_virtual_machine_name }
       location: { get_input: location }
       os_family: { get_input: example_azure_virtual_machine_os_family }
-      resource_config:
-        hardwareProfile:
-          vmSize: { get_input: example_azure_virtual_machine_size }
-        storageProfile:
-          imageReference:
-            publisher: { get_input: example_azure_virtual_machine_image_publisher }
-            offer: { get_input: example_azure_virtual_machine_image_offer }
-            sku: { get_input: example_azure_virtual_machine_image_sku }
-            version: { get_input: example_azure_virtual_machine_image_version }
-        osProfile:
-          computerName: { get_property: [SELF, name] }
-          adminUsername: { get_input: example_azure_virtual_machine_username }
-          adminPassword: { get_input: example_azure_virtual_machine_password }
-          linuxConfiguration:
-            ssh:
-              publicKeys: { get_input: example_azure_virtual_machine_public_keys }
-            disablePasswordAuthentication: { get_input: example_azure_virtual_machine_public_key_auth_only }
+      resource_config: { get_input: example_azure_virtual_machine_resource_config }
       agent_config:
         install_method: none
     relationships:

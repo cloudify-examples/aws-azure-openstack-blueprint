@@ -29,9 +29,9 @@ inputs:
     type: string
     default: false
 
-  example_openstack_private_network_subnet_gateway_ip:
-    type: string
-    default: 192.168.121.254
+#  example_openstack_private_network_subnet_gateway_ip:
+#    type: string
+#    default: 192.168.121.254
 
   example_openstack_private_network_subnet_dnsservers:
     default: [8.8.4.4, 8.8.8.8]
@@ -55,14 +55,16 @@ node_templates:
       subnet:
         ip_version: { get_input: example_openstack_private_network_subnet_ipversion }
         cidr: { concat: [ { get_input: example_openstack_private_network_subnet_cidr }, '/', { get_input: example_openstack_private_network_subnet_cidr_suffix } ] }
-        enable_dhcp: { get_input: example_openstack_private_network_subnet_enable_dhcp }
-        gateway_ip: { get_input: example_openstack_private_network_subnet_gateway_ip }
+#        enable_dhcp: { get_input: example_openstack_private_network_subnet_enable_dhcp }
+#        gateway_ip: { get_input: example_openstack_private_network_subnet_gateway_ip }
         dns_nameservers: { get_input: example_openstack_private_network_subnet_dnsservers }
-        host_routes: { get_input: example_openstack_private_network_subnet_host_routes }
+#        host_routes: { get_input: example_openstack_private_network_subnet_host_routes }
         allocation_pools: { get_input: example_openstack_private_network_subnet_allocation_pools }
     relationships:
       - target: example_openstack_private_network
         type: cloudify.relationships.contained_in
+      - target: example_openstack_network_router
+        type: cloudify.openstack.subnet_connected_to_router
 
 outputs:
   example_openstack_private_network_subnet:

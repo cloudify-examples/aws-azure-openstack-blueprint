@@ -10,9 +10,9 @@ inputs:
     type: string
     default: 'example-openstack-private-network-port'
 
-  example_openstack_private_test_port_fixed_ip:
-    type: string
-    default: { get_input: example_openstack_private_network_subnet_gateway_ip }
+#  example_openstack_private_test_port_fixed_ip:
+#    type: string
+#    default: { get_input: example_openstack_private_network_subnet_gateway_ip }
 
   example_openstack_private_network_port_address_pairs:
     default: []
@@ -25,7 +25,7 @@ node_templates:
       openstack_config: { get_input: openstack_configuration }
       use_external_resource: { get_input: use_existing_example_openstack_private_port }
       resource_id: { get_input: example_openstack_private_network_port_name }
-      fixed_ip: { get_input: example_openstack_private_test_port_fixed_ip }
+#      fixed_ip: { get_input: example_openstack_private_test_port_fixed_ip }
     relationships:
       - type: cloudify.relationships.contained_in
         target: example_openstack_private_network
