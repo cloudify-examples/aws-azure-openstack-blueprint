@@ -14,19 +14,19 @@ inputs:
 
   example_azure_virtual_machine_size:
     type: string
-    default: Standard_A3
+    default: Standard_A4
 
   example_azure_virtual_machine_image_publisher:
     type: string
-    default: OpenLogic
+    default: cloudify
 
   example_azure_virtual_machine_image_offer:
     type: string
-    default: CentOS
+    default: cloudify-3-4-1-preview
 
   example_azure_virtual_machine_image_sku:
     type: string
-    default: '7.0'
+    default: 'cloudify341'
 
   example_azure_virtual_machine_image_version:
     type: string
@@ -34,7 +34,7 @@ inputs:
 
   example_azure_virtual_machine_username:
     type: string
-    default: centos
+    default: cloudify
 
   example_azure_virtual_machine_password:
     type: string
@@ -54,6 +54,12 @@ inputs:
   example_azure_virtual_machine_public_key_auth_only:
     type: boolean
     default: true
+
+  example_azure_virtual_machine_plan:
+    default:
+      name: { get_input: example_azure_virtual_machine_image_sku }
+      publisher: { get_input: example_azure_virtual_machine_image_publisher }
+      product: { get_input: example_azure_virtual_machine_image_offer }
 
   example_azure_virtual_machine_resource_config_hardware_profile:
     default:
@@ -93,6 +99,7 @@ node_templates:
       name: { get_input: example_azure_virtual_machine_name }
       location: { get_input: location }
       os_family: { get_input: example_azure_virtual_machine_os_family }
+      plan: { get_input: example_azure_virtual_machine_plan }
       resource_config: { get_input: example_azure_virtual_machine_resource_config }
       agent_config:
         install_method: none

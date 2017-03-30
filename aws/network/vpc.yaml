@@ -15,6 +15,9 @@ inputs:
   example_aws_vpc_cidr:
     default: 172.16.0.0/16
 
+  example_aws_vpc_tags:
+    default: { get_input: default_tags }
+
 node_templates:
 
   example_aws_vpc:
@@ -24,6 +27,7 @@ node_templates:
       use_external_resource: { get_input: use_existing_example_aws_vpc }
       resource_id: { get_input: example_aws_vpc_id }
       cidr_block: { get_input: example_aws_vpc_cidr }
+      tags: { get_input: example_aws_vpc_tags }
 
 outputs:
 

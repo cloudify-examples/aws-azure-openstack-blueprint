@@ -14,6 +14,9 @@ inputs:
       If you changed use_existing_example_aws_public_route_table to true, then this is the route table ID.
     default: ''
 
+  example_aws_public_route_table_tags:
+    default: { get_input: default_tags }
+
 node_templates:
 
   example_aws_public_route_table:
@@ -22,6 +25,7 @@ node_templates:
       aws_config: { get_input: aws_configuration }
       use_external_resource: { get_input: use_existing_example_aws_public_route_table }
       resource_id: { get_input: example_public_route_table_id }
+      tags: { get_input: example_aws_public_route_table_tags }
     relationships:
       - type: cloudify.aws.relationships.routetable_contained_in_vpc
         target: example_aws_vpc
@@ -29,3 +33,10 @@ node_templates:
         target: example_aws_public_subnet
       - type: cloudify.aws.relationships.route_table_to_gateway
         target: example_aws_internet_gateway
+
+outputs:
+
+  example_aws_public_route_table:
+    description: AWS Public Route Table
+    value:
+      example_aws_public_route_table: { get_attribute: [ example_aws_public_route_table, aws_resource_id ] }

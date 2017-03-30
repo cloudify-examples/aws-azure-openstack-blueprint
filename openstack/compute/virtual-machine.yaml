@@ -36,3 +36,12 @@ node_templates:
         type: cloudify.openstack.server_connected_to_port
       - target: example_openstack_private_network_port
         type: cloudify.openstack.server_connected_to_port
+      - target: new
+        type: cloudify.openstack.server_connected_to_security_group
+
+  new:
+    type: cloudify.openstack.nodes.SecurityGroup
+    properties:
+      openstack_config: { get_input: openstack_configuration }
+      resource_id: new_group
+      rules: []
