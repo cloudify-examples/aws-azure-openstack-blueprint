@@ -18,6 +18,9 @@ inputs:
   example_aws_private_subnet_availability_zone:
     default: us-east-1e
 
+  example_aws_private_subnet_tags:
+    default: { get_input: default_tags }
+
 node_templates:
 
   example_aws_private_subnet:
@@ -28,6 +31,7 @@ node_templates:
       resource_id: { get_input: example_aws_private_subnet_id }
       cidr_block: { get_input: example_aws_private_subnet_cidr }
       availability_zone: { get_input: example_aws_private_subnet_availability_zone }
+      tags: { get_input: example_aws_private_subnet_tags }
     relationships:
       - type: cloudify.aws.relationships.subnet_contained_in_vpc
         target: example_aws_vpc

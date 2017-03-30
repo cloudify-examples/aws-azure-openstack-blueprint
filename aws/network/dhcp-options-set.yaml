@@ -18,6 +18,9 @@ inputs:
   example_aws_dhcp_options_set_domain_name_servers:
     default: 'AmazonProvidedDNS'
 
+  example_aws_dhcp_options_tags:
+    default: { get_input: default_tags }
+
 node_templates:
 
   example_aws_dhcp_options_set:
@@ -28,6 +31,14 @@ node_templates:
       resource_id: { get_input: example_aws_dhcp_options_set_id }
       domain_name: { get_input: example_aws_dhcp_options_set_domain_name }
       domain_name_servers: { get_input: example_aws_dhcp_options_set_domain_name_servers }
+      tags: { get_input: example_aws_dhcp_options_tags }
     relationships:
       - type: cloudify.aws.relationships.dhcp_options_associated_with_vpc
         target: example_aws_vpc
+
+outputs:
+
+  example_aws_dhcp_options_set:
+    description: AWS DHCP Options Set
+    value:
+      example_aws_dhcp_options_set: { get_attribute: [ example_aws_dhcp_options_set, aws_resource_id ] }

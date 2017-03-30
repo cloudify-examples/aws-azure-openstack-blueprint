@@ -10,6 +10,9 @@ inputs:
   example_aws_key_file:
     default: ~/.ssh/example-aws-key.pem
 
+  example_aws_key_tags:
+    default: { get_input: default_tags }
+
 node_templates:
 
   example_aws_key:
@@ -18,4 +21,13 @@ node_templates:
       aws_config: { get_input: aws_configuration }
       use_external_resource: { get_input: use_existing_example_aws_key }
       resource_id: { get_input: example_aws_key }
+      tags: { get_input: example_aws_key_tags }
       private_key_path: { get_input: example_aws_key_file }
+
+outputs:
+
+  example_aws_key:
+    description: AWS Key
+    value:
+      example_aws_key: { get_attribute: [ example_aws_key, aws_resource_id ] }
+

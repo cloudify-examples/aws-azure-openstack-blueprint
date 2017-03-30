@@ -12,6 +12,9 @@ inputs:
       If you changed use_existing_example_aws_private_route_table to true, then this is the route table ID.
     default: ''
 
+  example_aws_private_route_table_tags:
+    default: { get_input: default_tags }
+
 node_templates:
 
   example_aws_private_route_table:
@@ -20,6 +23,7 @@ node_templates:
       aws_config: { get_input: aws_configuration }
       use_external_resource: { get_input: use_existing_example_aws_private_route_table }
       resource_id: { get_input: example_private_route_table_id }
+      tags: { get_input: example_aws_private_route_table_tags }
     interfaces:
       cloudify.interfaces.lifecycle:
         create:
@@ -35,3 +39,11 @@ node_templates:
         target: example_aws_private_subnet
       - type: cloudify.relationships.connected_to
         target: example_aws_nat_instance
+
+outputs:
+
+  example_aws_private_route_table:
+    description: AWS Private Route Table
+    value:
+      example_aws_private_route_table: { get_attribute: [ example_aws_private_route_table, aws_resource_id ] }
+

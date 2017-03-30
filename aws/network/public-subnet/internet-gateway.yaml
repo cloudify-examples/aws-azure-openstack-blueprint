@@ -12,6 +12,9 @@ inputs:
       If you changed the input use_existing_example_aws_internet_gateway, then you should put the internet gateway ID here.
     default: ''
 
+  example_aws_igw_tags:
+    default: { get_input: default_tags }
+
 node_templates:
 
   example_aws_internet_gateway:
@@ -20,6 +23,15 @@ node_templates:
       aws_config: { get_input: aws_configuration }
       use_external_resource: { get_input: use_existing_example_aws_internet_gateway }
       resource_id: { get_input: example_aws_internet_gateway_id }
+      tags: { get_input: example_aws_igw_tags }
     relationships:
       - type: cloudify.aws.relationships.gateway_connected_to_vpc
         target: example_aws_vpc
+
+outputs:
+
+  example_aws_internet_gateway:
+    description: AWS Internet Gateway
+    value:
+      example_aws_internet_gateway: { get_attribute: [ example_aws_internet_gateway, aws_resource_id ] }
+
