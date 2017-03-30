@@ -17,49 +17,48 @@ First update the *inputs/aws.yaml.example* file with your credentials and overri
 To install:
 > $ cfy install aws/blueprint.yaml -i inputs/aws.yaml.example --task-retries=15 --task-retry-interval=15```
 
-Initializing local profile ...
-Initialization completed successfully
-Initializing blueprint...
-Initialized blueprint.yaml
-If you make changes to the blueprint, run `cfy init blueprint.yaml` again to apply them
-2019-12-31 00:00:00.000  CFY <local> Starting 'install' workflow execution  
+Initializing local profile ...<br />
+Initialization completed successfully<br />
+Initializing blueprint...<br />
+Initialized blueprint.yaml<br />
+If you make changes to the blueprint, run `cfy init blueprint.yaml` again to apply them<br />
+2019-12-31 00:00:00.000  CFY <local> Starting 'install' workflow execution<br />
 
 
 When the install workflow finishes, you can run the following to see useful data of all of the resources that were created:
 
 > $ cfy deployments outputs
 
-{
-  ...
-  "example_aws_private_subnet": {
-    "example_aws_private_subnet": "subnet-20e90f69"
-  },
-  ...
-  ...
-  "example_aws_public_subnet": {
-    "example_aws_public_subnet": "subnet-b7ed0bfe"
-  },
-  ...
-  ...
-  "example_aws_vpc": {
-    "example_aws_vpc": "vpc-644d5400"
-  }
-  ...
+{<br />
+  ...<br />
+  "example_aws_private_subnet": {<br />
+    "example_aws_private_subnet": "subnet-20e90f69"<br />
+  },<br />
+  ...<br />
+  ...<br />
+  "example_aws_public_subnet": {<br />
+    "example_aws_public_subnet": "subnet-b7ed0bfe"<br />
+  },<br />
+  ...<br />
+  "example_aws_vpc": {<br />
+    "example_aws_vpc": "vpc-644d5400"<br />
+  }<br />
+  ...<br />
 }
 
 To get the runtime properties of a specific node:
 
 > $ cfy node-instances example_aws_elastic_ip
 
-[
- ...
-     "id": "example_aws_elastic_ip_q0qu0b",
-     "name": "example_aws_elastic_ip",
- ...
-     "runtime_properties": {
- ...
-       "aws_resource_id": "52.208.38.8",
- ...
+[<br />
+ ...<br />
+     "id": "example_aws_elastic_ip_q0qu0b",<br />
+     "name": "example_aws_elastic_ip",<br />
+ ...<br />
+     "runtime_properties": {<br />
+ ...<br />
+       "aws_resource_id": "52.208.38.8",<br />
+ ...<br />
 ]
 
 
