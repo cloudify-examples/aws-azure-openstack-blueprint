@@ -13,13 +13,21 @@ inputs:
     default: ''
 
   example_aws_nat_instance_name:
-    default: 'example-aws-nat-instance'
+    default: 'Example AWS NAT Instance'
 
   nat_image_id:
     default: ami-224dc94a
 
   example_aws_nat_instance_type:
     default: t1.micro
+
+  example_aws_nat_instance_tags:
+    default: { get_input: default_tags }
+
+  example_aws_nat_instance_block_device_mapping:
+    default:
+      '/dev/sda1':
+        delete_on_termination: true
 
 node_templates:
 
@@ -30,10 +38,13 @@ node_templates:
       use_external_resource: { get_input: use_existing_example_aws_nat_instance }
       resource_id: { get_input: existing_example_aws_nat_instance_id }
       name: { get_input: example_aws_nat_instance_name }
+      tags: { get_input: example_aws_nat_instance_tags }
       image_id: { get_input: nat_image_id }
       instance_type: { get_input: example_aws_nat_instance_type }
       agent_config:
         install_method: none
+      parameters:
+        block_device_map: { get_input: example_aws_nat_instance_block_device_mapping }
     interfaces:
       cloudify.interfaces.lifecycle:
         configure:
@@ -48,3 +59,12 @@ node_templates:
         target: example_aws_nat_instance_elastic_ip
       - type: cloudify.aws.relationships.instance_connected_to_security_group
         target: example_aws_nat_instance_security_group
+
+outputs:
+
+  example_aws_nat_instance:
+    description: AWS NAT Instance
+    value:
+      example_aws_nat_instance: { get_attribute: [ example_aws_nat_instance, aws_resource_id ] }
+      example_aws_nat_instance_private_ip: { get_attribute: [ example_aws_nat_instance, ip ] }
+

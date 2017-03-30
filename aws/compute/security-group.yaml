@@ -12,20 +12,77 @@ inputs:
       If you changed the input use_existing_example_aws_security_group, then you should put the VPC ID here.
     default: ''
 
+  example_aws_security_group_ssh_cidr:
+    default: 0.0.0.0/0
+
+  example_aws_security_group_web_ui_cidr:
+    default: 0.0.0.0/0
+
+  example_aws_security_group_web_ui_cidr_ssl:
+    default: 0.0.0.0/0
+
+  example_aws_security_group_rabbitmq_cidr:
+    default: { get_input: example_aws_vpc_cidr }
+
+  example_aws_security_group_internal_rest_api_cidr:
+    default: { get_input: example_aws_vpc_cidr }
+
+  example_aws_security_group_file_server_cidr:
+    default: { get_input: example_aws_vpc_cidr }
+
   example_aws_security_group_rules:
     default:
-      - ip_protocol: tcp
-        from_port: 0
-        to_port: 65535
-        cidr_ip: 0.0.0.0/0
-      - ip_protocol: udp
-        from_port: 0
-        to_port: 65535
-        cidr_ip: 0.0.0.0/0
       - ip_protocol: icmp
         from_port: -1
         to_port: -1
-        cidr_ip: 0.0.0.0/0
+        cidr_ip: { get_input: example_aws_vpc_cidr }
+      - ip_protocol: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: { get_input: example_aws_security_group_ssh_cidr }
+      - ip_protocol: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: { get_input: example_aws_security_group_web_ui_cidr }
+      - ip_protocol: tcp
+        from_port: 443
+        to_port: 443
+        cidr_ip: { get_input: example_aws_security_group_web_ui_cidr_ssl }
+      - ip_protocol: tcp
+        from_port: 5671
+        to_port: 5671
+        cidr_ip: { get_input: example_aws_security_group_rabbitmq_cidr }
+      - ip_protocol: tcp
+        from_port: 8101
+        to_port: 8101
+        cidr_ip: { get_input: example_aws_security_group_internal_rest_api_cidr }
+      - ip_protocol: tcp
+        from_port: 53333
+        to_port: 53333
+        cidr_ip: { get_input: example_aws_security_group_file_server_cidr }
+      - ip_protocol: tcp
+        from_port: 8300
+        to_port: 8300
+        cidr_ip: { get_input: example_aws_vpc_cidr }
+      - ip_protocol: tcp
+        from_port: 8301
+        to_port: 8301
+        cidr_ip: { get_input: example_aws_vpc_cidr }
+      - ip_protocol: tcp
+        from_port: 8500
+        to_port: 8500
+        cidr_ip: { get_input: example_aws_vpc_cidr }
+      - ip_protocol: tcp
+        from_port: 22000
+        to_port: 22000
+        cidr_ip: { get_input: example_aws_vpc_cidr }
+      - ip_protocol: tcp
+        from_port: 15432
+        to_port: 15432
+        cidr_ip: { get_input: example_aws_vpc_cidr }
+
+  example_aws_sg_tags:
+    default: { get_input: default_tags }
 
 node_templates:
 
@@ -37,6 +94,7 @@ node_templates:
       resource_id: { get_input: example_aws_security_group_id }
       description: Compute Security Group
       rules: { get_input: example_aws_security_group_rules }
+      tags: { get_input: example_aws_sg_tags }
     relationships:
       - type: cloudify.aws.relationships.security_group_contained_in_vpc
         target: example_aws_vpc

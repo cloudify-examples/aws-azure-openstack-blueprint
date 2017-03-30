@@ -7,3 +7,4 @@ imports:
   - nat-instance-security-group.yaml
   - nat-instance-elastic-ip.yaml
   - nat-instance.yaml
+  - public-network-interface.yaml

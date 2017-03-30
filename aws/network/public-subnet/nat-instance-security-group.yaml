@@ -29,6 +29,13 @@ inputs:
         from_port: 0
         to_port: 65535
         cidr_ip: 0.0.0.0/0
+      - ip_protocol: icmp
+        from_port: -1
+        to_port: -1
+        cidr_ip: 0.0.0.0/0
+
+  example_aws_nat_instance_sg_tags:
+    default: { get_input: default_tags }
 
 node_templates:
 
@@ -40,6 +47,15 @@ node_templates:
       resource_id: { get_input: existing_example_aws_nat_instance_group_id }
       description: { get_input: example_aws_nat_instance_security_group_description }
       rules: { get_input: example_aws_nat_instance_security_groups }
+      tags: { get_input: example_aws_nat_instance_sg_tags }
     relationships:
       - type: cloudify.aws.relationships.security_group_contained_in_vpc
         target: example_aws_vpc
+
+outputs:
+
+  example_aws_nat_instance_security_group:
+    description: AWS NAT Instance Security Group
+    value:
+      example_aws_nat_instance_security_group: { get_attribute: [ example_aws_nat_instance_security_group, aws_resource_id ] }
+

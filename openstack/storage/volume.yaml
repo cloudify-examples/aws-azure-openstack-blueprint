@@ -26,3 +26,9 @@ node_templates:
     relationships:
       - type: cloudify.openstack.volume_attached_to_server
         target: example_openstack_virtual_machine
+
+outputs:
+  example_openstack_volume:
+    description: Openstack Volume
+    value:
+      example_openstack_group: { get_attribute: [ example_openstack_volume, external_id ] }

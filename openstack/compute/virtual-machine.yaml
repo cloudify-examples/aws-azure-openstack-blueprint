@@ -24,7 +24,8 @@ node_templates:
       openstack_config: { get_input: openstack_configuration }
       use_external_resource: { get_input: use_existing_example_openstack_virtual_machine }
       resource_id: { get_input: example_openstack_virtual_machine }
-      install_agent: false
+      agent_config:
+        install_method: none
       server:
         image: { get_input: example_openstack_virtual_machine_image_id }
         flavor: { get_input: example_openstack_virtual_machine_flavor_id }
@@ -36,3 +37,11 @@ node_templates:
         type: cloudify.openstack.server_connected_to_port
       - target: example_openstack_private_network_port
         type: cloudify.openstack.server_connected_to_port
+
+outputs:
+
+  example_openstack_virtual_machine:
+    description: OpenStack Example Server
+    value:
+      example_openstack_virtual_machine: { get_attribute: [ example_openstack_virtual_machine, external_id ] }
+      example_openstack_virtual_machine_private_ip: { get_attribute: [ example_openstack_virtual_machine, ip ] }

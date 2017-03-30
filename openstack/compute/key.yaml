@@ -20,3 +20,10 @@ node_templates:
       use_external_resource: { get_input: use_existing_example_openstack_key }
       resource_id: { get_input: example_openstack_key }
       private_key_path: { get_input: example_openstack_key_file }
+
+outputs:
+
+  example_openstack_key:
+    description: OpenStack Key
+    value:
+      example_aws_key: { get_attribute: [ example_openstack_key, external_id ] }

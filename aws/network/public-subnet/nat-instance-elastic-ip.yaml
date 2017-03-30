@@ -27,3 +27,11 @@ node_templates:
     relationships:
       - type: cloudify.relationships.depends_on
         target: example_aws_internet_gateway
+
+outputs:
+
+  example_aws_nat_instance_elastic_ip:
+    description: AWS NAT Instance Elastic IP
+    value:
+      example_aws_nat_instance_elastic_ip: { get_attribute: [ example_aws_nat_instance_elastic_ip, aws_resource_id ] }
+
