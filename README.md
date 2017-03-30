@@ -22,7 +22,7 @@ Initialization completed successfully
 Initializing blueprint...
 Initialized blueprint.yaml
 If you make changes to the blueprint, run `cfy init blueprint.yaml` again to apply them
-2019-12-31 00:00:00.000  CFY <local> Starting 'install' workflow execution
+2019-12-31 00:00:00.000  CFY <local> Starting 'install' workflow execution  
 
 
 When the install workflow finishes, you can run the following to see useful data of all of the resources that were created:
