@@ -1,0 +1,16 @@
+subscription_id: ''
+tenant_id: ''
+client_id: ''
+client_secret: ''
+
+location: eastus
+
+resource_prefix: cfy
+resource_suffix: 1
+
+example_azure_virtual_machine_name: cloudify
+example_azure_virtual_machine_public_key_data: |
+### Put the content of your public key here ####
+# blahblahblahblah
+####======
+example_azure_virtual_machine_public_key_path: /home/cloudify/.ssh/authorized_keys

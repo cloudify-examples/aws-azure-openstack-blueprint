@@ -9,20 +9,110 @@ inputs:
   example_openstack_group_name:
     default: 'example-openstack-group'
 
+  full_example_openstack_private_network_subnet_cidr:
+    default: { concat: [ { get_input: example_openstack_private_network_subnet_cidr }, '/', { get_input: example_openstack_private_network_subnet_cidr_suffix } ] }
+
+  example_openstack_security_group_ssh_cidr:
+    default: 0.0.0.0/0
+
+  example_openstack_security_group_web_ui_cidr:
+    default: 0.0.0.0/0
+
+  example_openstack_security_group_web_ui_cidr_ssl:
+    default: 0.0.0.0/0
+
+  example_openstack_security_group_rabbitmq_cidr:
+    default: { get_input: example_openstack_network_subnet_cidr }
+
+  example_openstack_security_group_rabbitmq_cidr_private:
+    default: { get_input: full_example_openstack_private_network_subnet_cidr }
+
+  example_openstack_security_group_internal_rest_api_cidr:
+    default: { get_input: example_openstack_network_subnet_cidr }
+
+  example_openstack_security_group_internal_rest_api_cidr_private:
+    default: { get_input: full_example_openstack_private_network_subnet_cidr }
+
+  example_openstack_security_group_file_server_cidr:
+    default: { get_input: example_openstack_network_subnet_cidr }
+
+  example_openstack_security_group_file_server_cidr_private:
+    default: { get_input: full_example_openstack_private_network_subnet_cidr }
+
   openstack_open_group_rules:
     default:
-      - remote_ip_prefix: 0.0.0.0/0
-        port_range_min: 1
-        port_range_max: 65535
-        protocol: tcp
-      - remote_ip_prefix: 0.0.0.0/0
-        port_range_min: 1
-        port_range_max: 65535
-        protocol: udp
       - remote_ip_prefix: 0.0.0.0/0
         port_range_min: null
         port_range_max: null
         protocol: icmp
+      - remote_ip_prefix: { get_input: example_openstack_security_group_ssh_cidr }
+        port_range_min: 22
+        port_range_max: 22
+        protocol: tcp
+      - remote_ip_prefix: { get_input: example_openstack_security_group_web_ui_cidr }
+        port_range_min: 80
+        port_range_max: 80
+        protocol: tcp
+      - remote_ip_prefix: { get_input: example_openstack_security_group_web_ui_cidr_ssl }
+        port_range_min: 443
+        port_range_max: 443
+        protocol: tcp
+      - remote_ip_prefix: { get_input: example_openstack_security_group_rabbitmq_cidr }
+        port_range_min: 5671
+        port_range_max: 5671
+        protocol: tcp
+      - remote_ip_prefix: { get_input: full_example_openstack_private_network_subnet_cidr }
+        port_range_min: 5671
+        port_range_max: 5671
+        protocol: tcp
+      - remote_ip_prefix: { get_input: example_openstack_security_group_rabbitmq_cidr }
+        port_range_min: 8101
+        port_range_max: 8101
+        protocol: tcp
+      - remote_ip_prefix: { get_input: full_example_openstack_private_network_subnet_cidr }
+        port_range_min: 8101
+        port_range_max: 8101
+        protocol: tcp
+      - remote_ip_prefix: { get_input: example_openstack_security_group_rabbitmq_cidr }
+        port_range_min: 53333
+        port_range_max: 53333
+        protocol: tcp
+      - remote_ip_prefix: { get_input: full_example_openstack_private_network_subnet_cidr }
+        port_range_min: 53333
+        port_range_max: 53333
+        protocol: tcp
+      - remote_ip_prefix: { get_input: example_openstack_security_group_rabbitmq_cidr }
+        port_range_min: 8300
+        port_range_max: 8301
+        protocol: tcp
+      - remote_ip_prefix: { get_input: full_example_openstack_private_network_subnet_cidr }
+        port_range_min: 8300
+        port_range_max: 8301
+        protocol: tcp
+      - remote_ip_prefix: { get_input: example_openstack_security_group_rabbitmq_cidr }
+        port_range_min: 8500
+        port_range_max: 8500
+        protocol: tcp
+      - remote_ip_prefix: { get_input: full_example_openstack_private_network_subnet_cidr }
+        port_range_min: 8500
+        port_range_max: 8500
+        protocol: tcp
+      - remote_ip_prefix: { get_input: example_openstack_security_group_rabbitmq_cidr }
+        port_range_min: 22000
+        port_range_max: 22000
+        protocol: tcp
+      - remote_ip_prefix: { get_input: full_example_openstack_private_network_subnet_cidr }
+        port_range_min: 22000
+        port_range_max: 22000
+        protocol: tcp
+      - remote_ip_prefix: { get_input: example_openstack_security_group_rabbitmq_cidr }
+        port_range_min: 15432
+        port_range_max: 15432
+        protocol: tcp
+      - remote_ip_prefix: { get_input: full_example_openstack_private_network_subnet_cidr }
+        port_range_min: 15432
+        port_range_max: 15432
+        protocol: tcp
 
 node_templates:
 
