@@ -41,10 +41,12 @@ inputs:
     default: ''
 
   example_azure_virtual_machine_public_key_data:
-    default: ''
+    description: Public key content to pass to virtual machine
+    type: string
 
   example_azure_virtual_machine_public_key_path:
-    default: ''
+    description: Path to where public key will be used
+    type: string
 
   example_azure_virtual_machine_public_keys:
     default:
