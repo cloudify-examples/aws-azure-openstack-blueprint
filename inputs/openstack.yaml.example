@@ -6,7 +6,8 @@ keystone_username: ''
 keystone_password: ''
 keystone_tenant_name: ''
 keystone_url: ''
-
 region: sal01
-example_openstack_virtual_machine_image_id: '' # Cloudify Manager 3.4
-example_openstack_virtual_machine_flavor_id: ''
+
+#
+# example_openstack_virtual_machine_image_id: '' # Cloudify Manager 4.0
+# example_openstack_virtual_machine_flavor_id: ''

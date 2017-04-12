@@ -18,15 +18,15 @@ inputs:
 
   example_azure_virtual_machine_image_publisher:
     type: string
-    default: cloudify
+    default: OpenLogic
 
   example_azure_virtual_machine_image_offer:
     type: string
-    default: cloudify-3-4-1-preview
+    default: CentOS
 
   example_azure_virtual_machine_image_sku:
     type: string
-    default: 'cloudify341'
+    default: '7.3'
 
   example_azure_virtual_machine_image_version:
     type: string
@@ -56,12 +56,6 @@ inputs:
   example_azure_virtual_machine_public_key_auth_only:
     type: boolean
     default: true
-
-  example_azure_virtual_machine_plan:
-    default:
-      name: { get_input: example_azure_virtual_machine_image_sku }
-      publisher: { get_input: example_azure_virtual_machine_image_publisher }
-      product: { get_input: example_azure_virtual_machine_image_offer }
 
   example_azure_virtual_machine_resource_config_hardware_profile:
     default:
@@ -101,7 +95,6 @@ node_templates:
       name: { get_input: example_azure_virtual_machine_name }
       location: { get_input: location }
       os_family: { get_input: example_azure_virtual_machine_os_family }
-      plan: { get_input: example_azure_virtual_machine_plan }
       resource_config: { get_input: example_azure_virtual_machine_resource_config }
       agent_config:
         install_method: none
@@ -114,3 +107,12 @@ node_templates:
       target: example_azure_nic
     - type: cloudify.azure.relationships.connected_to_nic
       target: example_azure_private_nic
+
+outputs:
+
+  example_azure_virtual_machine:
+    description: Azure Example Instance
+    value:
+      example_azure_virtual_machine_name: { get_attribute: [ example_azure_virtual_machine, name ] }
+      example_azure_virtual_machine_public_ip: { get_attribute: [ example_azure_virtual_machine, public_ip ] }
+      example_azure_virtual_machine_private_ip: { get_attribute: [ example_azure_virtual_machine, ip ] }
