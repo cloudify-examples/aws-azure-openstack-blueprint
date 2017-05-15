@@ -342,6 +342,7 @@ $ cfy plugins upload cloudify_diamond_plugin-1.3.5-py27-none-linux_x86_64-centos
 $ cfy plugins upload cloudify_diamond_plugin-1.3.5-py27-none-linux_x86_64-Ubuntu-trusty.wgn
 $ cfy plugins upload cloudify_openstack_plugin-2.0.1-py27-none-linux_x86_64-centos-Core.wgn
 $ cfy plugins upload cloudify_aws_plugin-1.4.4-py27-none-linux_x86_64-centos-Core.wgn
+```
 
 
 # Explanation of the repository directory structure
