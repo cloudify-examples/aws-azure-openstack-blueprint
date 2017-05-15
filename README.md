@@ -15,7 +15,7 @@ Each IaaS is organized under its own directory:
 - azure/blueprint.yaml
 - openstack/blueprint.yaml
 
-For more information, see [this](#Explanation-of-the-repository-directory-structure).
+For more information, see [this](#explanation-of-the-repository-directory-structure).
 
 
 ## Prerequisites
